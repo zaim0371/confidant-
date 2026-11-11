@@ -112,6 +112,7 @@ textarea::placeholder{color:var(--tx2)}
 #mem{max-height:150px;overflow-y:auto;margin-bottom:12px}.mi{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:13.5px;padding:4px 0 4px;border-top:1px solid var(--ln)}.mi span{flex:1;min-width:0;overflow-wrap:anywhere}
 .ab.rec{color:var(--r);animation:bl 1.2s infinite}
 .eb{align-self:flex-end;margin:-16px 4px 0 0;background:none;border:0;color:var(--tx2);font:500 12px inherit;font-family:inherit;padding:2px 6px;cursor:pointer}.eb:hover{color:var(--tx)}
+#pop{position:absolute;left:14px;bottom:76px;max-width:calc(100% - 28px);background:var(--bg);border:1px solid var(--ln);border-radius:16px;padding:12px 16px;box-shadow:0 8px 28px rgba(0,0,0,.18);display:none;z-index:2}#pop.show{display:block;animation:up .2s both}#pop small{display:block;color:var(--tx2);font-size:11.5px;letter-spacing:.05em;text-transform:uppercase;margin-bottom:2px}#pop b{display:block;font-size:14.5px;font-weight:500;overflow-wrap:anywhere}
 .ub{flex:none;border:1px solid var(--ln);background:none;color:var(--tx);font:500 12px inherit;font-family:inherit;padding:4px 11px;border-radius:99px;cursor:pointer}.ub:disabled{opacity:.5}
 </style>
 </head>
@@ -122,7 +123,6 @@ textarea::placeholder{color:var(--tx2)}
     <h1>Zaim’s Confidant</h1>
     <div class="hb" style="width:38px"></div>
   </header>
-  <div id="ds" style="display:none;font-size:12px;color:var(--tx2);padding:0 0 6px;cursor:pointer" title="Muat ulang"></div>
   <div id="log"><div id="empty"><b>Hai, Zaim.</b>Cerita apa aja, aku dengerin.</div></div>
   <div id="prev"><img id="pimg" alt=""><button id="pdel" aria-label="Hapus foto">✕</button></div>
   <div class="bar">
@@ -133,8 +133,8 @@ textarea::placeholder{color:var(--tx2)}
   </div>
 </div>
 
-<div id="dov"></div><aside id="drw"><div class="dh">Confidant</div><button class="nv" id="setb"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12M20 18h0"/><circle cx="16" cy="6" r="2"/><circle cx="10" cy="12" r="2"/><circle cx="18" cy="18" r="2"/></svg><span>Pengaturan</span></button><div class="dsep"></div><div class="dl2">Terbaru</div><div id="dl"></div><div class="df"><button class="av" id="av" aria-label="Pengaturan">Z</button><button class="np" id="new"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>Obrolan baru</button></div></aside>
-<div id="set"><div class="card"><h2>Pengaturan</h2><p id="sacc"></p><div class="vt">Karakter AI</div><div id="pers"></div><p id="pdesc"></p><div class="vt">Ingatan AI</div><div id="mem"></div><button class="btn sb" id="gear">API key Gemini</button><button class="btn sb" id="acc">Masuk</button><div class="row"><button class="btn" id="sclose">Tutup</button></div></div></div>
+<div id="dov"></div><aside id="drw"><div class="dh">Confidant</div><button class="nv" id="setb"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12M20 18h0"/><circle cx="16" cy="6" r="2"/><circle cx="10" cy="12" r="2"/><circle cx="18" cy="18" r="2"/></svg><span>Pengaturan</span></button><div class="dsep"></div><div class="dl2">Terbaru</div><div id="dl"></div><div id="pop"><small>Akun</small><b id="popm"></b></div><div class="df"><button class="av" id="av" aria-label="Detail akun">Z</button><button class="np" id="new"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>Obrolan baru</button></div></aside>
+<div id="set"><div class="card"><h2>Pengaturan</h2><p id="sacc"></p><div class="vt">Karakter AI</div><div id="pers"></div><p id="pdesc"></p><div class="vt">Ingatan AI</div><div id="mem"></div><div class="vt">Status data</div><p id="ds" style="cursor:pointer;margin-bottom:12px" title="Ketuk untuk muat ulang"></p><button class="btn sb" id="gear">API key Gemini</button><button class="btn sb" id="acc">Masuk</button><div class="row"><button class="btn" id="sclose">Tutup</button></div></div></div>
 <div id="auth"><div class="card"><h2>Zaim’s Confidant</h2><p>Masuk supaya obrolan tersimpan di akunmu.</p>
 <input id="aem" type="email" placeholder="Email" autocomplete="email"><input id="apw" type="password" placeholder="Password" autocomplete="current-password">
 <div id="aerr" style="min-height:20px;font-size:13px;color:var(--tx2);margin:2px 0"></div>
@@ -317,9 +317,20 @@ async function sbx(path,m,b,pref){await tok();if(!SES)throw new Error("belum log
   const h={apikey:SBK,Authorization:"Bearer "+SES.access_token,"Content-Type":"application/json"};if(pref)h.Prefer=pref;
   const r=await fetch(SBU+"/rest/v1/"+path,{method:m||"GET",headers:h,body:b!==undefined?JSON.stringify(b):undefined});
   if(!r.ok){let m="";try{m=(await r.json()).message||""}catch(e){}const er=new Error(m||"db "+r.status);er.status=r.status;throw er}const t=await r.text();return t?JSON.parse(t):null}
-let DCTX="",DT=0,DATA=null,DST="",HST="";
-const dsr=()=>{const e=$("ds"),t=[DST,HST].filter(Boolean).join(" · ");e.textContent=t;e.style.display=t?"":"none"};
+let DCTX="",DT=0,DATA=null,DST="",HST="",XT=null;
+// tabel lain di database (wishlist, fitur belajar Classroom, dll): dicari otomatis, hanya dibaca
+const XSKIP=/^(manager_state|secretary_todos|secretary_notes|class_sessions|confidant_)/;
+const XCAND=["wishlist","wishlists","wish_list","wishes","wish_items","wishlist_items","manager_wishlist","class_materials","class_material","class_notes","class_quizzes","class_quiz","class_flashcards","class_lessons","class_progress","class_topics","class_subjects","class_summaries","class_questions","class_attempts","class_vocab","class_assignments","classroom_notes","lessons","quizzes","flashcards","materials","study_sessions","learning"];
+async function xtNames(){if(XT)return XT;let n=[];
+  try{const o=await sbx("");n=Object.keys(o.definitions||{}).concat(Object.keys(o.paths||{}).map(x=>x.replace(/^\//,"")).filter(x=>x&&x.indexOf("rpc/")!==0))}catch(e){}
+  n=[...new Set(n)].filter(x=>!XSKIP.test(x));
+  if(!n.length)n=(await Promise.all(XCAND.map(t=>sbx(t+"?select=*&limit=1").then(()=>t,()=>null)))).filter(Boolean);
+  return XT=n.slice(0,25)}
+const dsr=()=>{const e=$("ds"),t=[DST,HST].filter(Boolean).join(" · ");e.textContent=(t||"Belum dimuat")+" — ketuk untuk muat ulang"};
 const rows=async p=>(await sbx(p))||[];
+const SK=new Set(["id","user_id","created_at","updated_at"]);
+const tx_=(v,n)=>{let s=typeof v==="object"?JSON.stringify(v):String(v);s=s.replace(/<[^>]+>/g," ").replace(/\s*\n\s*/g," ⏎ ").replace(/[{}|]/g," ").replace(/\s+/g," ").trim();return s.length>n?s.slice(0,n)+"…":s};
+const ex=(o,known,n)=>Object.entries(o||{}).filter(([k,v])=>!SK.has(k)&&!known.includes(k)&&v!=null&&v!==""&&v!==false).map(([k,v])=>k+": "+tx_(v,n||300)).join("; ");
 const R=n=>"Rp"+Math.round(n).toLocaleString("id-ID"),rc=n=>{n=Math.round(n);const a=Math.abs(n);return(n<0?"-":"")+"Rp"+(a>=1e6?(a/1e6).toFixed(a>=1e7?0:1).replace(".",",")+"jt":a>=1e3?Math.round(a/1e3)+"rb":a)};
 const iso=()=>{const n=new Date();return n.getFullYear()+"-"+String(n.getMonth()+1).padStart(2,"0")+"-"+String(n.getDate()).padStart(2,"0")};
 const fd=x=>new Date(x+"T00:00").toLocaleDateString("id-ID",{day:"numeric",month:"short"});
@@ -330,16 +341,16 @@ function finStats(){const tx=((DATA&&DATA.mgr.tx)||[]).filter(x=>x.cat!=="Tabung
   return{ms,cur:ms[5],prev:ms[4],cats:Object.entries(cat).sort((a,b)=>b[1]-a[1]),cnt:tx.length,day:n.getDate(),tx}}
 async function dataCtx(force){if(!SES||(!force&&DT&&Date.now()-DT<3e5))return;DT=Date.now();
   const uid=SES.user.id,td=iso(),di=(new Date().getDay()+6)%7;
-  const Rs=await Promise.allSettled([rows("manager_state?select=data&user_id=eq."+uid),rows("secretary_todos?select=id,text,done&limit=300").catch(()=>rows("secretary_todos?select=text,done&limit=300")),
-    rows("secretary_notes?select=id,title,ts&order=ts.desc&limit=200").catch(()=>rows("secretary_notes?select=title,ts&order=ts.desc&limit=200")),rows("class_sessions?select=id,title,scheduled_at,status&order=scheduled_at.desc&limit=100&user_id=eq."+uid).catch(()=>rows("class_sessions?select=title,scheduled_at,status&order=scheduled_at.desc&limit=100&user_id=eq."+uid))]);
+  const Rs=await Promise.allSettled([rows("manager_state?select=data&user_id=eq."+uid),rows("secretary_todos?select=*&limit=300"),
+    rows("secretary_notes?select=*&order=ts.desc&limit=200").catch(()=>rows("secretary_notes?select=*&limit=200")),rows("class_sessions?select=*&order=scheduled_at.desc&limit=60&user_id=eq."+uid).catch(()=>rows("class_sessions?select=*&limit=60&user_id=eq."+uid))]);
   const N=["Manager","To do","Catatan","Kelas"],L=[],S=[],v=i=>Rs[i].status==="fulfilled"?Rs[i].value:[];
   Rs.forEach((r,i)=>S.push(N[i]+(r.status==="fulfilled"?" ✓":" ✗ "+(r.reason&&(r.reason.status||r.reason.message)||""))));
   const d=(v(0)[0]||{}).data||{};DATA={mgr:d,todos:v(1),notes:v(2),cls:v(3)};NK=v(2).length&&v(2)[0].id===undefined?"ts":"id";
   const tk=d.tasks||[],ta=tk.filter(t=>!t.done);
   if(tk.length)L.push("Statistik tugas: aktif "+ta.length+", selesai "+(tk.length-ta.length)+", terlambat "+ta.filter(t=>t.deadline&&t.deadline<td).length);
-  tk.slice(0,25).forEach((t,i)=>L.push("[task "+i+"] "+t.title+(t.deadline?" | deadline "+t.deadline:"")+(t.done?" | SELESAI":"")));
+  tk.slice(0,40).forEach((t,i)=>{const e=ex(t,["title","deadline","done"]);L.push("[task "+i+"] "+t.title+(t.deadline?" | deadline "+t.deadline:"")+(t.done?" | SELESAI":"")+(e?" | "+e:""))});
   L.push("Hari ini hari "+DN[di]+" (indeks hari "+di+")");
-  (d.sched||[]).forEach((day,k)=>(day||[]).slice(0,10).forEach((x,i)=>L.push("[jadwal "+k+"."+i+"] "+DN[k]+": "+x.text+(x.time?" jam "+x.time:"")+(x.date?" tgl "+x.date:""))));
+  (d.sched||[]).forEach((day,k)=>(day||[]).slice(0,15).forEach((x,i)=>{const e=ex(x,["text","time","date"]);L.push("[jadwal "+k+"."+i+"] "+DN[k]+": "+x.text+(x.time?" jam "+x.time:"")+(x.date?" tgl "+x.date:"")+(e?" | "+e:""))}));
   const f=finStats(),sm=k=>(d.tx||[]).filter(x=>x.type===k).reduce((a,x)=>a+(Number(x.amt)||0),0);
   if((d.tx||[]).length)L.push("Saldo utama: "+R(sm("in")-sm("out")));
   if(f.cnt){const c=f.cur,tot=f.cats.reduce((a,x)=>a+x[1],0)||1,big=f.tx.filter(x=>x.type==="out"&&String(x.date).slice(0,7)===c.k).sort((a,b)=>b.amt-a.amt).slice(0,3);
@@ -348,10 +359,21 @@ async function dataCtx(force){if(!SES||(!force&&DT&&Date.now()-DT<3e5))return;DT
     if(big.length)L.push("Pengeluaran terbesar bulan ini: "+big.map(x=>(x.note||x.cat)+" "+R(x.amt)).join(", "));
     L.push("Tren 6 bulan (masuk/keluar): "+f.ms.map(m=>m.l+" "+rc(m.i)+"/"+rc(m.o)).join(", "))}
   (d.tx||[]).map((x,i)=>[x,i]).sort((a,b)=>String(b[0].date).localeCompare(String(a[0].date))).slice(0,15).forEach(([x,i])=>L.push("[tx "+i+"] "+x.date+" "+(x.type==="in"?"masuk ":"keluar ")+R(x.amt)+" "+(x.cat||"")+(x.note?" - "+x.note:"")));
-  (d.savings||[]).slice(0,8).forEach((g,i)=>L.push("[saving "+i+"] Tabungan "+g.name+": "+R(+g.saved||0)+(+g.target?" dari "+R(+g.target):"")));
-  v(1).filter(t=>!t.done).slice(0,15).forEach(t=>L.push((t.id!==undefined?"[todo "+t.id+"] ":"")+"To do: "+t.text));v(2).slice(0,10).forEach(t=>t.title&&L.push("[note "+t[NK]+"] Catatan: "+t.title));
-  v(3).filter(t=>t.status==="scheduled"&&new Date(t.scheduled_at)>new Date()).sort((a,b)=>new Date(a.scheduled_at)-new Date(b.scheduled_at)).slice(0,8).forEach(t=>L.push((t.id!==undefined?"[kelas "+t.id+"] ":"")+"Kelas: "+t.title+" "+new Date(t.scheduled_at).toLocaleString("id-ID",{weekday:"short",day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"})));
-  DCTX=L.join("\n").slice(0,8000);
+  (d.savings||[]).slice(0,15).forEach((g,i)=>{const e=ex(g,["name","saved","target"]);L.push("[saving "+i+"] Tabungan "+g.name+": "+R(+g.saved||0)+(+g.target?" dari "+R(+g.target):"")+(e?" | "+e:""))});
+  Object.keys(d).filter(k=>!["tasks","sched","tx","savings"].includes(k)).forEach(k=>d[k]!=null&&L.push("Data Manager ("+k+"): "+tx_(d[k],4000)));
+  v(1).filter(t=>!t.done).slice(0,40).forEach(t=>{const e=ex(t,["text","done"]);L.push((t.id!==undefined?"[todo "+t.id+"] ":"")+"To do: "+t.text+(e?" | "+e:""))});
+  v(1).filter(t=>t.done).slice(0,10).forEach(t=>L.push("To do SELESAI: "+t.text));
+  let nb=0;v(2).slice(0,60).forEach((t,i)=>{const bk=Object.keys(t).filter(k=>!SK.has(k)&&k!=="title"&&k!=="ts"&&t[k]!=null&&t[k]!==""),
+    body=i<25&&nb<14000?bk.map(k=>(bk.length>1?k+": ":"")+tx_(t[k],1500)).join(" / "):"";nb+=body.length;
+    L.push("[note "+t[NK]+"] Catatan: "+(t.title||"Tanpa judul")+(t.ts?" ("+new Date(+t.ts).toLocaleDateString("id-ID",{day:"numeric",month:"short",year:"numeric"})+")":"")+(body?" | ISI: "+body:i>=25?" | (isi tidak dimuat, tanya Zaim kalau perlu)":""))});
+  const nowT=new Date(),kl=t=>{const e=ex(t,["title","scheduled_at","status"],600);return(t.id!==undefined?"[kelas "+t.id+"] ":"")+"Kelas: "+t.title+" "+new Date(t.scheduled_at).toLocaleString("id-ID",{weekday:"short",day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"})+(t.status?" | "+t.status:"")+(e?" | "+e:"")};
+  v(3).filter(t=>t.scheduled_at&&new Date(t.scheduled_at)>nowT).sort((a,b)=>new Date(a.scheduled_at)-new Date(b.scheduled_at)).slice(0,15).forEach(t=>L.push(kl(t)));
+  v(3).filter(t=>t.scheduled_at&&new Date(t.scheduled_at)<=nowT).slice(0,10).forEach(t=>L.push(kl(t)));
+  try{const xn=await xtNames(),xr=await Promise.allSettled(xn.map(t=>sbx(t+"?select=*&limit=100")));
+    xr.forEach((r,i)=>{const t=xn[i];if(r.status!=="fulfilled"){S.push(t+" ✗");return}const rw=r.value||[];S.push(t+" ✓ "+rw.length);if(!rw.length)return;
+      L.push("Tabel "+t+" ("+rw.length+" baris, hanya bisa dibaca):");let b=0;
+      for(let j=0;j<rw.length&&b<6000;j++){const e="["+t+" "+j+"] "+ex(rw[j],[],400);b+=e.length;L.push(e)}})}catch(e){}
+  DCTX=L.join("\n").slice(0,40000);
   if(Rs.some(r=>r.status!=="fulfilled"))DT=0;
   DST="Data: "+S.join(" · ");dsr();
   document.querySelectorAll(".viz[data-empty]").forEach(hz)}
@@ -655,7 +677,7 @@ async function send(){
   const stx=t=>{if(!part)el.innerHTML='<span class="dots"><i></i><i></i><i></i></span><small class="st">'+esc(t)+'</small>'};
   stx("");AC=new AbortController();await Promise.race([dataCtx(true),slp(3500)]);
   const sys=sysBase()+"\n\nSekarang: "+new Date().toLocaleString("id-ID",{dateStyle:"full",timeStyle:"short"})+(SES?"\nTanggal hari ini (ISO): "+iso():"")+(SES?ACTSYS:NOLOGIN)+MEMSYS+memCtx()+undoNote()+
-    (DCTX?"\n\nKonteks hidup Zaim (dari app Manager, Secretary, Classroom miliknya). Untuk obrolan biasa, sebut hanya kalau nyambung. Jangan mengarang angka; pakai hanya yang ada di konteks.\n"+DCTX+"\n\nWIDGET: aplikasi bisa menampilkan grafik/kartu dari data asli kalau kamu menulis tag di baris sendiri: {{viz:keuangan}} {{viz:tugas}} {{viz:jadwal}} {{viz:tabungan}} {{viz:todo}} {{viz:kelas}} {{viz:catatan}}. Kalau Zaim bertanya soal keuangan (pemasukan, pengeluaran, saldo, boros, kategori, tren): tulis {{viz:keuangan}} lalu penjelasan LENGKAP (angka bulan ini, perbandingan bulan lalu, kategori terbesar, pola atau tren, saran singkat); untuk ini boleh panjang dan boleh pakai poin. Kalau bertanya soal data lain: tulis tag yang cocok lalu 1-3 kalimat komentar. Untuk obrolan biasa jangan pakai tag.":"");
+    (DCTX?"\n\nKonteks hidup Zaim (dari app Manager, Secretary, Classroom miliknya). Selain itu ada data tambahan (Wishlist, materi/fitur belajar Classroom, dan tabel lain) berawalan \"Tabel ...\" atau \"Data Manager (...)\": itu juga bisa kamu baca, tapi hanya dibaca, belum bisa kamu ubah. Kamu BISA membaca seluruh isi data ini, termasuk ISI catatan (setelah tanda \"ISI:\"), isi to do, kelas, tugas, jadwal, dan keuangan. Kalau Zaim bertanya isi catatan atau data apa pun, baca dari konteks dan jawab langsung; jangan bilang kamu tidak bisa membaca. Untuk obrolan biasa, sebut hanya kalau nyambung. Jangan mengarang angka; pakai hanya yang ada di konteks.\n"+DCTX+"\n\nWIDGET: aplikasi bisa menampilkan grafik/kartu dari data asli kalau kamu menulis tag di baris sendiri: {{viz:keuangan}} {{viz:tugas}} {{viz:jadwal}} {{viz:tabungan}} {{viz:todo}} {{viz:kelas}} {{viz:catatan}}. Kalau Zaim bertanya soal keuangan (pemasukan, pengeluaran, saldo, boros, kategori, tren): tulis {{viz:keuangan}} lalu penjelasan LENGKAP (angka bulan ini, perbandingan bulan lalu, kategori terbesar, pola atau tren, saran singkat); untuk ini boleh panjang dan boleh pakai poin. Kalau bertanya soal data lain: tulis tag yang cocok lalu 1-3 kalimat komentar. Untuk obrolan biasa jangan pakai tag.":"");
   try{
     const out=await gen(ctxMsgs(),{sys,temp:PERS[PERSONA].full?1:.6,full:!!PERS[PERSONA].full,sig:AC.signal,onStatus:stx,onText:t=>{part=t;el.innerHTML=md(t);bottom()}});
     if(!out.trim()){el.className="m a err";el.textContent="Aku nggak bisa jawab yang itu. Coba bilang dengan cara lain.";hist.pop()}
@@ -713,14 +735,14 @@ function paintDrawer(){const l=$("dl");l.innerHTML="";$("av").textContent=SES?St
     r.innerHTML=`<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/></svg><div class='ct'><b></b></div><span class='ra'><button class='ib' aria-label='Ubah nama'>✎</button><button class='ib' aria-label='Hapus'>✕</button></span>`;
     r.querySelector("b").textContent=c.title;
     const bs=r.querySelectorAll("button");r.onclick=()=>openChat(c.id);bs[0].onclick=e=>{e.stopPropagation();renChat(c)};bs[1].onclick=e=>{e.stopPropagation();delChat(c)};l.appendChild(r)})}
-const openDrawer=()=>{paintDrawer();$("drw").classList.add("show");$("dov").classList.add("show")},closeDrawer=()=>{$("drw").classList.remove("show");$("dov").classList.remove("show")};
+const openDrawer=()=>{paintDrawer();$("drw").classList.add("show");$("dov").classList.add("show")},closeDrawer=()=>{$("pop").classList.remove("show");$("drw").classList.remove("show");$("dov").classList.remove("show")};
 $("menu").onclick=openDrawer;$("dov").onclick=closeDrawer;
 function paintPers(){const w=$("pers");w.innerHTML="";
   Object.keys(PERS).forEach(k=>{const b=document.createElement("button");b.type="button";b.className="chip"+(k===PERSONA?" on":"");b.textContent=PERS[k].n;
     b.onclick=()=>{if(k===PERSONA)return;PERSONA=k;PSW=hist.length;try{localStorage.setItem("zcf-persona",k)}catch(e){}paintPers()};w.appendChild(b)});
   $("pdesc").textContent=PERS[PERSONA].d}
 const closeSet=()=>$("set").classList.remove("show"),openSet=()=>{closeDrawer();paintPers();paintMem();$("sacc").textContent=SES?SES.user.email:"Belum masuk akun";$("set").classList.add("show")};
-$("setb").onclick=openSet;$("av").onclick=openSet;$("sclose").onclick=closeSet;$("set").onclick=e=>{if(e.target===$("set"))closeSet()};
+$("setb").onclick=openSet;$("av").onclick=e=>{e.stopPropagation();const p=$("pop");$("popm").textContent=SES?SES.user.email:"Belum masuk akun";p.classList.toggle("show")};document.addEventListener("click",e=>{if(!e.target.closest("#pop"))$("pop").classList.remove("show")});$("sclose").onclick=closeSet;$("set").onclick=e=>{if(e.target===$("set"))closeSet()};
 function newChat(){PSW=0;setCid(null);hist=[];save();paint();paintDrawer()}
 async function loadMsgs(id){const r=await rows("confidant_messages?select=role,content&chat_id=eq."+id+"&order=id.asc&limit=300");if(CID!==id)return;hist=r.filter(m=>m.content);PSW=0;save();paint()}
 async function openChat(id){if(busy){return}closeDrawer();if(id===CID&&hist.length)return;setCid(id);hist=[];log.innerHTML='<div class="m a err">Memuat…</div>';paintDrawer();
@@ -791,7 +813,8 @@ $("acc").onclick=()=>{closeSet();if(!SES){$("aerr").textContent="";$("auth").cla
   SES=null;try{localStorage.removeItem("zcf-ses")}catch(e){}location.reload()};
 // ---------- mulai ----------
 if(!SES&&!GUEST)$("auth").classList.add("show");
-else{if(hist.length)hist.forEach(m=>add(m.role,m.content,true));markEdit();fit();if(!KEY)openKey();loadRemote();memLoad()}
+else{if(SES){setCid(null);hist=[];save()} // buka web = obrolan baru; obrolan lama tetap ada di riwayat
+  if(hist.length)hist.forEach(m=>add(m.role,m.content,true));markEdit();fit();if(!KEY)openKey();loadRemote();memLoad()}
 </script>
 </body>
 </html>
