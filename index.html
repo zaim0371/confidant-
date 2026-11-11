@@ -64,13 +64,48 @@ textarea::placeholder{color:var(--tx2)}
 #auth input{margin-bottom:10px}
 #auth .btn{width:100%;margin-top:6px;padding:12px}
 #auth .ln{background:none;border:0;color:var(--tx2);font:13.5px inherit;font-family:inherit;margin-top:14px;cursor:pointer;width:100%;text-decoration:underline}
+
+:root{--g:#2f9e6b;--r:#e5484d;--ac:#6b7cff}
+@media(prefers-color-scheme:dark){:root{--g:#3fe0a0;--r:#ff7b86;--ac:#8b9bff}}
+.viz{margin:10px 0 14px;background:var(--cd);border-radius:18px;padding:14px;animation:up .4s both}
+.vt{font-size:11.5px;color:var(--tx2);letter-spacing:.05em;text-transform:uppercase;margin-bottom:10px}
+.tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}
+.tile{background:var(--bg);border-radius:12px;padding:9px 10px;min-width:0}
+.tile b{display:block;font-size:15px;font-weight:600;letter-spacing:-.01em;white-space:nowrap}
+.tile small{color:var(--tx2);font-size:11.5px}
+.bars{display:flex;align-items:flex-end;gap:8px;height:100px}
+.bc{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;height:100%;justify-content:flex-end}
+.bp{display:flex;gap:3px;align-items:flex-end;height:100%;width:100%;justify-content:center}
+.bp i{display:block;width:42%;border-radius:5px 5px 2px 2px;min-height:2px}
+.bi{background:var(--g)}.bo{background:var(--r)}
+.bc span{font-size:11px;color:var(--tx2)}
+.hr{margin:9px 0}.hr>div{display:flex;justify-content:space-between;gap:8px;font-size:13.5px}.hr small{color:var(--tx2);font-size:12px}
+.hb2{height:7px;border-radius:9px;background:var(--bg);overflow:hidden;margin-top:5px}.hb2 i{display:block;height:100%;border-radius:9px}
+.lg{display:flex;gap:12px;font-size:12px;color:var(--tx2);margin:8px 0 0}
+.lg i{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:5px}
+.li{display:flex;justify-content:space-between;gap:10px;padding:8px 0;border-top:1px solid var(--ln);font-size:13.5px}
+.li small{color:var(--tx2);white-space:nowrap}
+#dov{position:fixed;inset:0;background:rgba(0,0,0,.35);opacity:0;pointer-events:none;transition:opacity .25s;z-index:15}
+#dov.show{opacity:1;pointer-events:auto}
+#drw{position:fixed;top:0;bottom:0;left:0;width:min(84vw,320px);background:var(--bg);border-right:1px solid var(--ln);transform:translateX(-100%);transition:transform .28s cubic-bezier(.2,.9,.25,1);z-index:16;display:flex;flex-direction:column;padding:env(safe-area-inset-top,0px) 14px env(safe-area-inset-bottom,0px)}
+#drw.show{transform:none}
+.dh{padding:18px 4px 10px;font-size:14px;font-weight:600}
+#dl{flex:1;overflow-y:auto;scrollbar-width:none}
+.ci{display:flex;align-items:center;gap:2px;padding:9px 6px 9px 10px;border-radius:12px;cursor:pointer}.ci.on,.ci:hover{background:var(--cd)}
+.ct{flex:1;min-width:0}.ct b{display:block;font-size:14px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.ct small{color:var(--tx2);font-size:12px}
+.dn{color:var(--tx2);font-size:13.5px;padding:12px 10px}
+.df{display:flex;gap:4px;border-top:1px solid var(--ln);padding:10px 0}
+.acts{margin-top:10px;display:flex;flex-direction:column;gap:6px}
+.ac{font-size:13px;background:var(--cd);border-radius:12px;padding:7px 12px;line-height:1.45}
+.ac.bad{color:var(--r)}
 </style>
 </head>
 <body>
 <div class="app">
   <header>
+    <button class="ib" id="menu" aria-label="Riwayat"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h10"/></svg></button>
     <h1>Zaim’s Confidant</h1>
-    <div class="hb"><button class="ib" id="new">Baru</button><button class="ib" id="gear">Key</button><button class="ib" id="acc">Masuk</button></div>
+    <div class="hb"><button class="ib" id="new">Baru</button></div>
   </header>
   <div id="ds" style="display:none;font-size:12px;color:var(--tx2);padding:0 0 6px;cursor:pointer" title="Muat ulang"></div>
   <div id="log"><div id="empty"><b>Hai, Zaim.</b>Cerita apa aja, aku dengerin.</div></div>
@@ -80,6 +115,7 @@ textarea::placeholder{color:var(--tx2)}
   </div>
 </div>
 
+<div id="dov"></div><aside id="drw"><div class="dh">Riwayat</div><div id="dl"></div><div class="df"><button class="ib" id="gear">Key</button><button class="ib" id="acc">Masuk</button></div></aside>
 <div id="auth"><div class="card"><h2>Zaim’s Confidant</h2><p>Masuk supaya obrolan tersimpan di akunmu.</p>
 <input id="aem" type="email" placeholder="Email" autocomplete="email"><input id="apw" type="password" placeholder="Password" autocomplete="current-password">
 <div id="aerr" style="min-height:20px;font-size:13px;color:var(--tx2);margin:2px 0"></div>
@@ -128,24 +164,44 @@ async function sbx(path,m,b,pref){await tok();if(!SES)throw new Error("belum log
   const h={apikey:SBK,Authorization:"Bearer "+SES.access_token,"Content-Type":"application/json"};if(pref)h.Prefer=pref;
   const r=await fetch(SBU+"/rest/v1/"+path,{method:m||"GET",headers:h,body:b!==undefined?JSON.stringify(b):undefined});
   if(!r.ok){let m="";try{m=(await r.json()).message||""}catch(e){}const er=new Error(m||"db "+r.status);er.status=r.status;throw er}const t=await r.text();return t?JSON.parse(t):null}
-let DCTX="",DT=0;
+let DCTX="",DT=0,DATA=null,DST="",HST="";
+const dsr=()=>{const e=$("ds"),t=[DST,HST].filter(Boolean).join(" · ");e.textContent=t;e.style.display=t?"":"none"};
 const rows=async p=>(await sbx(p))||[];
+const R=n=>"Rp"+Math.round(n).toLocaleString("id-ID"),rc=n=>{n=Math.round(n);const a=Math.abs(n);return(n<0?"-":"")+"Rp"+(a>=1e6?(a/1e6).toFixed(a>=1e7?0:1).replace(".",",")+"jt":a>=1e3?Math.round(a/1e3)+"rb":a)};
+const iso=()=>{const n=new Date();return n.getFullYear()+"-"+String(n.getMonth()+1).padStart(2,"0")+"-"+String(n.getDate()).padStart(2,"0")};
+const fd=x=>new Date(x+"T00:00").toLocaleDateString("id-ID",{day:"numeric",month:"short"});
+function finStats(){const tx=((DATA&&DATA.mgr.tx)||[]).filter(x=>x.cat!=="Tabungan"),n=new Date(),mk=(y,m)=>y+"-"+String(m+1).padStart(2,"0"),ms=[];
+  for(let i=5;i>=0;i--){const d=new Date(n.getFullYear(),n.getMonth()-i,1);ms.push({k:mk(d.getFullYear(),d.getMonth()),l:d.toLocaleDateString("id-ID",{month:"short"}),i:0,o:0})}
+  tx.forEach(x=>{const m=ms.find(z=>z.k===String(x.date).slice(0,7));if(m)m[x.type==="in"?"i":"o"]+=Number(x.amt)||0});
+  const cat={};tx.filter(x=>x.type==="out"&&String(x.date).slice(0,7)===ms[5].k).forEach(x=>{const c=x.cat||"Lainnya";cat[c]=(cat[c]||0)+(Number(x.amt)||0)});
+  return{ms,cur:ms[5],prev:ms[4],cats:Object.entries(cat).sort((a,b)=>b[1]-a[1]),cnt:tx.length,day:n.getDate(),tx}}
 async function dataCtx(force){if(!SES||(!force&&DT&&Date.now()-DT<3e5))return;DT=Date.now();
-  const uid=SES.user.id,td=new Date(),iso=td.getFullYear()+"-"+String(td.getMonth()+1).padStart(2,"0")+"-"+String(td.getDate()).padStart(2,"0"),di=(td.getDay()+6)%7;
-  const R=await Promise.allSettled([rows("manager_state?select=data&user_id=eq."+uid),rows("secretary_todos?select=text&done=eq.false&order=ts.desc&limit=10"),
-    rows("secretary_notes?select=title&order=ts.desc&limit=8"),rows("class_sessions?select=title,scheduled_at&status=eq.scheduled&scheduled_at=gt."+encodeURIComponent(td.toISOString())+"&order=scheduled_at.asc&limit=4&user_id=eq."+uid)]);
-  const N=["Manager","To do","Catatan","Kelas"],L=[],S=[],v=i=>R[i].status==="fulfilled"?R[i].value:[];
-  R.forEach((r,i)=>S.push(N[i]+(r.status==="fulfilled"?" ✓":" ✗ "+(r.reason&&(r.reason.status||r.reason.message)||""))));
-  const d=(v(0)[0]||{}).data||{},num=x=>Number(x)||0;
-  (d.tasks||[]).filter(t=>!t.done).slice(0,8).forEach(t=>L.push("Tugas: "+t.title+(t.deadline?" (deadline "+t.deadline+")":"")));
-  ((d.sched||[])[di]||[]).filter(x=>!x.date||x.date===iso).slice(0,8).forEach(x=>L.push("Hari ini: "+x.text+(x.time?" jam "+x.time:"")));
-  if((d.tx||[]).length){const sm=k=>d.tx.filter(x=>x.type===k).reduce((a,x)=>a+num(x.amt),0);L.push("Saldo utama: Rp"+(sm("in")-sm("out")).toLocaleString("id-ID"))}
-  (d.savings||[]).slice(0,5).forEach(g=>L.push("Tabungan "+g.name+": Rp"+num(g.saved).toLocaleString("id-ID")+(num(g.target)?" dari Rp"+num(g.target).toLocaleString("id-ID"):"")));
-  v(1).forEach(t=>L.push("To do: "+t.text));v(2).forEach(t=>t.title&&L.push("Catatan: "+t.title));
-  v(3).forEach(t=>L.push("Kelas: "+t.title+" "+new Date(t.scheduled_at).toLocaleString("id-ID",{weekday:"short",day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"})));
-  DCTX=L.join("\n").slice(0,1800);
-  if(R.some(r=>r.status!=="fulfilled"))DT=0;
-  const el=$("ds");if(el){el.textContent="Data: "+S.join(" · ");el.style.display=""}}
+  const uid=SES.user.id,td=iso(),di=(new Date().getDay()+6)%7;
+  const Rs=await Promise.allSettled([rows("manager_state?select=data&user_id=eq."+uid),rows("secretary_todos?select=id,text,done&limit=300").catch(()=>rows("secretary_todos?select=text,done&limit=300")),
+    rows("secretary_notes?select=title,ts&order=ts.desc&limit=200"),rows("class_sessions?select=title,scheduled_at,status&order=scheduled_at.desc&limit=100&user_id=eq."+uid)]);
+  const N=["Manager","To do","Catatan","Kelas"],L=[],S=[],v=i=>Rs[i].status==="fulfilled"?Rs[i].value:[];
+  Rs.forEach((r,i)=>S.push(N[i]+(r.status==="fulfilled"?" ✓":" ✗ "+(r.reason&&(r.reason.status||r.reason.message)||""))));
+  const d=(v(0)[0]||{}).data||{};DATA={mgr:d,todos:v(1),notes:v(2),cls:v(3)};
+  const tk=d.tasks||[],ta=tk.filter(t=>!t.done);
+  if(tk.length)L.push("Statistik tugas: aktif "+ta.length+", selesai "+(tk.length-ta.length)+", terlambat "+ta.filter(t=>t.deadline&&t.deadline<td).length);
+  tk.slice(0,25).forEach((t,i)=>L.push("[task "+i+"] "+t.title+(t.deadline?" | deadline "+t.deadline:"")+(t.done?" | SELESAI":"")));
+  L.push("Hari ini hari "+DN[di]+" (indeks hari "+di+")");
+  (d.sched||[]).forEach((day,k)=>(day||[]).slice(0,10).forEach((x,i)=>L.push("[jadwal "+k+"."+i+"] "+DN[k]+": "+x.text+(x.time?" jam "+x.time:"")+(x.date?" tgl "+x.date:""))));
+  const f=finStats(),sm=k=>(d.tx||[]).filter(x=>x.type===k).reduce((a,x)=>a+(Number(x.amt)||0),0);
+  if((d.tx||[]).length)L.push("Saldo utama: "+R(sm("in")-sm("out")));
+  if(f.cnt){const c=f.cur,tot=f.cats.reduce((a,x)=>a+x[1],0)||1,big=f.tx.filter(x=>x.type==="out"&&String(x.date).slice(0,7)===c.k).sort((a,b)=>b.amt-a.amt).slice(0,3);
+    L.push("Keuangan bulan ini (tanpa setor/tarik tabungan): masuk "+R(c.i)+", keluar "+R(c.o)+", selisih "+R(c.i-c.o)+"; rata-rata keluar/hari "+R(c.o/f.day)+". Bulan lalu: masuk "+R(f.prev.i)+", keluar "+R(f.prev.o)+".");
+    if(f.cats.length)L.push("Kategori keluar bulan ini: "+f.cats.slice(0,6).map(([k,x])=>k+" "+R(x)+" ("+Math.round(x/tot*100)+"%)").join(", "));
+    if(big.length)L.push("Pengeluaran terbesar bulan ini: "+big.map(x=>(x.note||x.cat)+" "+R(x.amt)).join(", "));
+    L.push("Tren 6 bulan (masuk/keluar): "+f.ms.map(m=>m.l+" "+rc(m.i)+"/"+rc(m.o)).join(", "))}
+  (d.tx||[]).map((x,i)=>[x,i]).sort((a,b)=>String(b[0].date).localeCompare(String(a[0].date))).slice(0,15).forEach(([x,i])=>L.push("[tx "+i+"] "+x.date+" "+(x.type==="in"?"masuk ":"keluar ")+R(x.amt)+" "+(x.cat||"")+(x.note?" - "+x.note:"")));
+  (d.savings||[]).slice(0,8).forEach((g,i)=>L.push("[saving "+i+"] Tabungan "+g.name+": "+R(+g.saved||0)+(+g.target?" dari "+R(+g.target):"")));
+  v(1).filter(t=>!t.done).slice(0,15).forEach(t=>L.push((t.id!==undefined?"[todo "+t.id+"] ":"")+"To do: "+t.text));v(2).slice(0,8).forEach(t=>t.title&&L.push("Catatan: "+t.title));
+  v(3).filter(t=>t.status==="scheduled"&&new Date(t.scheduled_at)>new Date()).sort((a,b)=>new Date(a.scheduled_at)-new Date(b.scheduled_at)).slice(0,4).forEach(t=>L.push("Kelas: "+t.title+" "+new Date(t.scheduled_at).toLocaleString("id-ID",{weekday:"short",day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"})));
+  DCTX=L.join("\n").slice(0,8000);
+  if(Rs.some(r=>r.status!=="fulfilled"))DT=0;
+  DST="Data: "+S.join(" · ");dsr();
+  document.querySelectorAll(".viz[data-empty]").forEach(hz)}
 
 // ---------- sistem AI (dari Zaim’s Classroom) ----------
 let KEY="",MODEL="",CANDS=[];
@@ -174,7 +230,7 @@ const pool=()=>[...new Set([MODEL,...CANDS,"gemini-flash-latest","gemini-flash-l
 async function once(m,msgs,o,st){
   let tl=TKM[m]||0;
   for(;;){
-    const body={systemInstruction:{parts:[{text:o.sys}]},contents:msgs.map(x=>({role:x.role==="assistant"?"model":"user",parts:[{text:x.content}]})),generationConfig:{temperature:1,maxOutputTokens:1024}};
+    const body={systemInstruction:{parts:[{text:o.sys}]},contents:msgs.map(x=>({role:x.role==="assistant"?"model":"user",parts:[{text:x.content}]})),generationConfig:{temperature:o.temp||1,maxOutputTokens:2048}};
     const tk=thkOpts(m)[tl];if(tk)body.generationConfig.thinkingConfig=tk;
     const ac=new AbortController();let to=false;const tmo=setTimeout(()=>{to=true;ac.abort()},20000);
     if(o.sig)o.sig.addEventListener("abort",()=>ac.abort(),{once:true});
@@ -224,7 +280,7 @@ function errMsg(e){const s=e&&e.status,d=e&&e.detail?" ("+e.detail+")":"";
 
 // ---------- tampilan ----------
 const esc=s=>s.replace(/[&<>]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]));
-function md(t){const cb=[];
+function md0(t){const cb=[];
   t=esc(t).replace(/```(?:\w*\n)?([\s\S]*?)(```|$)/g,(_,c)=>{cb.push(c.replace(/\n$/,""));return"\u0000"+(cb.length-1)+"\u0000"});
   const inl=s=>s.replace(/`([^`]+)`/g,"<code>$1</code>").replace(/\*\*([^*]+)\*\*/g,"<b>$1</b>").replace(/(^|[\s(])\*([^*\n]+)\*/g,"$1<i>$2</i>");
   const ul=/^\s*[-*•]\s+/,ol=/^\s*\d+[.)]\s+/;
@@ -233,16 +289,128 @@ function md(t){const cb=[];
     if(ls.every(l=>ol.test(l)))return"<ol>"+ls.map(l=>"<li>"+inl(l.replace(ol,""))+"</li>").join("")+"</ol>";
     return"<p>"+inl(ls.join("<br>"))+"</p>"}).join("")
     .replace(/\u0000(\d+)\u0000/g,(_,i)=>"</p><pre><code>"+cb[i]+"</code></pre><p>").replace(/<p><\/p>/g,"")}
+const md=(t,full)=>md0(String(t).replace(/\{\{(?:act|res):[^\n]*/g,"").replace(/\{\{viz:([a-z]+)\}\}/g,(m,k)=>full&&VZ[k]?"\n\n\u0002"+k+"\u0002\n\n":"").replace(/\{\{[^}]*$/,"")).replace(/<p>\u0002([a-z]+)\u0002<\/p>/g,'<div class="viz" data-v="$1"></div>');
+const vt=t=>'<div class="vt">'+t+'</div>',tile=(b,t,c)=>'<div class="tile"><b'+(c?' style="color:'+c+'"':"")+'>'+b+'</b><small>'+t+'</small></div>',
+  bar=(p,c)=>'<div class="hb2"><i style="width:'+Math.max(2,Math.min(100,p))+'%;background:'+(c||"var(--tx)")+'"></i></div>',li=(a,b)=>'<div class="li"><span>'+esc(String(a))+'</span><small>'+esc(String(b||""))+'</small></div>',
+  empty=t=>vt(t)+'<div class="dn" style="padding:0">Belum ada data.</div>',DN=["Sen","Sel","Rab","Kam","Jum","Sab","Min"];
+const VZ={
+ keuangan(){const s=finStats();if(!s.cnt)return empty("Keuangan");
+  const mx=Math.max(1,...s.ms.flatMap(m=>[m.i,m.o])),c=s.cur,dl=c.i-c.o,ch=s.prev.o?Math.round((c.o-s.prev.o)/s.prev.o*100):null,tot=s.cats.reduce((a,x)=>a+x[1],0)||1;
+  return vt("Keuangan · bulan ini")+'<div class="tiles">'+tile(rc(c.i),"Pemasukan","var(--g)")+tile(rc(c.o),"Pengeluaran","var(--r)")+tile(rc(dl),"Selisih",dl<0?"var(--r)":"var(--g)")+'</div>'
+  +(ch===null?"":'<div class="lg" style="margin:-4px 0 12px">Pengeluaran '+(ch>0?"naik ":"turun ")+Math.abs(ch)+'% dari bulan lalu</div>')
+  +'<div class="bars">'+s.ms.map(m=>'<div class="bc"><div class="bp"><i class="bi" style="height:'+m.i/mx*100+'%"></i><i class="bo" style="height:'+m.o/mx*100+'%"></i></div><span>'+m.l+'</span></div>').join("")+'</div>'
+  +'<div class="lg"><span><i style="background:var(--g)"></i>Masuk</span><span><i style="background:var(--r)"></i>Keluar</span></div>'
+  +(s.cats.length?'<div class="vt" style="margin:16px 0 2px">Kategori pengeluaran</div>'+s.cats.slice(0,6).map(([k,x])=>'<div class="hr"><div><span>'+esc(k)+'</span><small>'+rc(x)+' · '+Math.round(x/tot*100)+'%</small></div>'+bar(x/tot*100,"var(--ac)")+'</div>').join(""):"")},
+ tugas(){const t=DATA.mgr.tasks||[];if(!t.length)return empty("Tugas");const a=t.filter(x=>!x.done),dn=t.length-a.length,td=iso(),ov=a.filter(x=>x.deadline&&x.deadline<td).length;
+  return vt("Tugas")+'<div class="tiles">'+tile(a.length,"Aktif")+tile(dn,"Selesai","var(--g)")+tile(ov,"Terlambat",ov?"var(--r)":"")+'</div>'+bar(dn/t.length*100,"var(--g)")+'<div class="lg" style="margin-bottom:6px">'+Math.round(dn/t.length*100)+'% selesai</div>'
+  +a.slice().sort((x,y)=>(x.deadline||"9")>(y.deadline||"9")?1:-1).slice(0,5).map(x=>li(x.title,x.deadline?fd(x.deadline):"tanpa deadline")).join("")},
+ jadwal(){const S=DATA.mgr.sched||[],di=(new Date().getDay()+6)%7,td=iso(),cn=DN.map((_,i)=>(S[i]||[]).length),mx=Math.max(1,...cn),ty=(S[di]||[]).filter(x=>!x.date||x.date===td);
+  return vt("Jadwal minggu ini")+'<div class="bars" style="height:70px">'+DN.map((n,i)=>'<div class="bc"><div class="bp"><i style="width:60%;height:'+cn[i]/mx*100+'%;background:'+(i===di?"var(--ac)":"var(--ln)")+'"></i></div><span'+(i===di?' style="color:var(--tx)"':"")+'>'+n+'</span></div>').join("")+'</div>'
+  +'<div class="vt" style="margin:16px 0 2px">Hari ini · '+ty.length+' kegiatan</div>'+(ty.length?ty.map(x=>li(x.text,x.time)).join(""):'<div class="dn" style="padding:0">Kosong.</div>')},
+ tabungan(){const g=DATA.mgr.savings||[];if(!g.length)return empty("Tabungan");const tot=g.reduce((a,x)=>a+(+x.saved||0),0);
+  return vt("Tabungan")+'<div class="tiles" style="grid-template-columns:1fr 1fr">'+tile(rc(tot),"Total tersimpan","var(--g)")+tile(g.length,"Celengan")+'</div>'
+  +g.map(x=>'<div class="hr"><div><span>'+esc(x.name)+'</span><small>'+rc(+x.saved||0)+(+x.target?" / "+rc(+x.target)+" · "+Math.round((+x.saved||0)/+x.target*100)+"%":"")+'</small></div>'+(+x.target?bar((+x.saved||0)/+x.target*100,"var(--g)"):"")+'</div>').join("")},
+ todo(){const t=DATA.todos;if(!t.length)return empty("To do");const u=t.filter(x=>!x.done);
+  return vt("To do")+'<div class="tiles">'+tile(u.length,"Belum")+tile(t.length-u.length,"Selesai","var(--g)")+tile(t.length,"Total")+'</div>'+bar((t.length-u.length)/t.length*100,"var(--g)")+'<div style="height:6px"></div>'+u.slice(0,6).map(x=>li(x.text)).join("")},
+ catatan(){const n=DATA.notes;if(!n.length)return empty("Catatan");
+  return vt("Catatan")+'<div class="tiles" style="grid-template-columns:1fr 1fr">'+tile(n.length,"Catatan")+tile(DATA.todos.length,"To do")+'</div>'+n.slice(0,6).map(x=>li(x.title||"Tanpa judul",x.ts?new Date(+x.ts).toLocaleDateString("id-ID",{day:"numeric",month:"short"}):"")).join("")},
+ kelas(){const c=DATA.cls;if(!c.length)return empty("Kelas");const sc=c.filter(x=>x.status==="scheduled"&&new Date(x.scheduled_at)>new Date()).sort((a,b)=>new Date(a.scheduled_at)-new Date(b.scheduled_at)),ms=c.filter(x=>x.status==="missed").length,ht=c.filter(x=>x.status!=="scheduled"&&x.status!=="missed").length;
+  return vt("Kelas")+'<div class="tiles">'+tile(sc.length,"Akan datang")+tile(ht,"Hadir","var(--g)")+tile(ms,"Terlewat",ms?"var(--r)":"")+'</div>'+sc.slice(0,5).map(x=>li(x.title,new Date(x.scheduled_at).toLocaleString("id-ID",{weekday:"short",day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"}))).join("")}};
+function hz(v){const f=VZ[v.dataset.v];if(!f)return;if(!DATA){v.dataset.empty=1;v.innerHTML=vt("Memuat data…");return}delete v.dataset.empty;try{v.innerHTML=f()}catch(e){v.remove()}}
+const hydrate=el=>el.querySelectorAll(".viz").forEach(hz);
 const log=$("log"),ta=$("in"),sb=$("send");
 let hist=[],busy=false,AC=null;
 try{hist=JSON.parse(localStorage.getItem(HK())||"[]").filter(m=>m&&m.content)}catch(e){}
 const save=()=>{try{hist=hist.slice(-60);localStorage.setItem(HK(),JSON.stringify(hist))}catch(e){}};
 const bottom=()=>{log.scrollTop=log.scrollHeight};
-function add(role,text){const e=$("empty");if(e)e.remove();
+function add(role,text,full){const e=$("empty");if(e)e.remove();
   const d=document.createElement("div");d.className="m "+(role==="user"?"u":"a");
-  if(role==="user")d.textContent=text;else if(text)d.innerHTML=md(text);
+  if(role==="user")d.textContent=text;else if(text){d.innerHTML=md(text,full);if(full){hydrate(d);chips(d,text)}}
   log.appendChild(d);bottom();return d}
 function fit(){ta.style.height="auto";ta.style.height=Math.min(ta.scrollHeight,140)+"px";sb.disabled=!busy&&!ta.value.trim();sb.style.opacity=busy?".9":""}
+// ---------- aksi data: catat / ubah / hapus ----------
+const LAB={task:"Tugas",tx:"Transaksi",saving:"Tabungan",sched:"Jadwal",todo:"To do"},VB={add:"ditambah",edit:"diubah",del:"dihapus"};
+const clean=s=>String(s==null?"":s).replace(/[{}|\n]/g," ").trim();
+function parseActs(t){const a=[],re=/\{\{act:(\{.*?\})\}\}/g;let m;while((m=re.exec(t))){try{a.push(JSON.parse(m[1]))}catch(e){a.push({op:"bad"})}}return a}
+function chips(el,t){const m=/\{\{res:([^\n]*?)\}\}/.exec(t);if(!m)return;const w=document.createElement("div");w.className="acts";
+  m[1].split(" | ").forEach(s=>{const c=document.createElement("div");c.className="ac"+(s[0]==="✗"?" bad":"");c.textContent=s;w.appendChild(c)});el.appendChild(w)}
+const newId=L=>L.some(x=>typeof x.id==="string")?uuid():Date.now()+Math.floor(Math.random()*1000);
+async function mgrEdit(fn){const uid=SES.user.id,r=await rows("manager_state?select=data&user_id=eq."+uid),d=(r[0]||{}).data||{},msg=fn(d);
+  if(r[0])await sbx("manager_state?user_id=eq."+uid,"PATCH",{data:d},"return=minimal");
+  else await sbx("manager_state","POST",[{user_id:uid,data:d}],"return=minimal");
+  return msg}
+function pick(a){const o={};
+  if(a.t==="task"){if(a.title!=null)o.title=String(a.title);if(a.deadline!=null)o.deadline=a.deadline;if(a.done!=null)o.done=!!a.done}
+  if(a.t==="tx"){if(a.type!=null)o.type=a.type==="in"?"in":"out";if(a.amt!=null)o.amt=Number(a.amt);if(a.cat!=null)o.cat=String(a.cat);if(a.note!=null)o.note=String(a.note);if(a.date!=null)o.date=a.date}
+  if(a.t==="saving"){if(a.name!=null)o.name=String(a.name);if(a.target!=null)o.target=Number(a.target);if(a.saved!=null)o.saved=Number(a.saved)}
+  if(a.t==="sched"){if(a.text!=null)o.text=String(a.text);if(a.time!=null)o.time=a.time;if(a.date!=null)o.date=a.date}
+  return o}
+const nm=o=>clean(o.title||o.name||o.note||o.text||o.cat||"");
+function listAct(d,a){const k={task:"tasks",tx:"tx",saving:"savings"}[a.t],L=d[k]=d[k]||[],o=pick(a);
+  if(a.op==="add"){
+    if(a.t==="task"){if(!o.title)throw new Error("judul tugas kosong");o.done=!!o.done;o.deadline=o.deadline||""}
+    if(a.t==="tx"){if(!(o.amt>0))throw new Error("nominal tidak valid");o.type=o.type||"out";o.date=o.date||iso();o.cat=o.cat||"Lainnya"}
+    if(a.t==="saving"){if(!o.name)throw new Error("nama tabungan kosong");o.saved=o.saved||0;o.target=o.target||0}
+    o.id=newId(L);L.push(o);return LAB[a.t]+" ditambah: "+nm(o)+(a.t==="tx"?" ("+R(o.amt)+")":"")}
+  const i=Number(a.ref);if(!Number.isInteger(i)||!L[i])throw new Error(LAB[a.t]+" #"+a.ref+" tidak ketemu");
+  const old=nm(L[i]);
+  if(a.op==="del"){L.splice(i,1);return LAB[a.t]+" dihapus: "+old}
+  if(!Object.keys(o).length)throw new Error("tidak ada yang diubah");
+  Object.assign(L[i],o);return LAB[a.t]+" diubah: "+old}
+function schedAct(d,a){const S=d.sched=d.sched||[];for(let i=0;i<7;i++)S[i]=S[i]||[];const o=pick(a);
+  if(a.op==="add"){if(!o.text)throw new Error("isi jadwal kosong");
+    const di=a.day!=null?Number(a.day):a.date?(new Date(a.date+"T00:00").getDay()+6)%7:(new Date().getDay()+6)%7;
+    if(!(di>=0&&di<=6))throw new Error("hari tidak valid");o.time=o.time||"";o.id=newId(S[di]);S[di].push(o);return "Jadwal ditambah: "+DN[di]+" "+nm(o)+(o.time?" jam "+o.time:"")}
+  const [dd,ii]=String(a.ref).split(".").map(Number),it=(S[dd]||[])[ii];if(!it)throw new Error("Jadwal #"+a.ref+" tidak ketemu");
+  const old=nm(it);
+  if(a.op==="del"){S[dd].splice(ii,1);return "Jadwal dihapus: "+old}
+  if(!Object.keys(o).length)throw new Error("tidak ada yang diubah");
+  Object.assign(it,o);return "Jadwal diubah: "+old}
+async function todoAct(a){const T="secretary_todos";
+  if(a.op==="add"){const o={text:String(a.text||"").trim(),done:false};if(!o.text)throw new Error("isi to do kosong");
+    const vs=[o,{...o,user_id:SES.user.id},{...o,id:uuid(),user_id:SES.user.id}];let er;
+    for(const b of vs){try{await sbx(T,"POST",[b],"return=minimal");return "To do ditambah: "+clean(o.text)}catch(e){er=e}}
+    throw er}
+  if(a.ref==null)throw new Error("to do tidak ketemu");
+  const f=T+"?id=eq."+encodeURIComponent(a.ref);
+  if(a.op==="del"){const r=await sbx(f,"DELETE",undefined,"return=representation");if(!r||!r.length)throw new Error("to do tidak ketemu");return "To do dihapus: "+clean(r[0].text)}
+  const o={};if(a.text!=null)o.text=String(a.text);if(a.done!=null)o.done=!!a.done;if(!Object.keys(o).length)throw new Error("tidak ada yang diubah");
+  const r=await sbx(f,"PATCH",o,"return=representation");if(!r||!r.length)throw new Error("to do tidak ketemu");return "To do diubah: "+clean(r[0].text)}
+async function doAct(a){if(!SES)throw new Error("masuk akun dulu");
+  if(!VB[a.op]||!LAB[a.t])throw new Error("perintah tidak dikenali");
+  if(a.t==="todo")return await todoAct(a);
+  return await mgrEdit(d=>a.t==="sched"?schedAct(d,a):listAct(d,a))}
+async function runActs(acts){const res=[],ord=x=>x.op==="edit"?0:x.op==="add"?1:2,ix=x=>Number(String(x.ref).split(".").pop())||0;
+  // hapus dari indeks terbesar dulu supaya indeks lain tidak bergeser
+  const q=acts.slice().sort((a,b)=>ord(a)-ord(b)||(a.op==="del"&&b.op==="del"?ix(b)-ix(a):0));
+  for(const a of q){try{res.push({ok:1,m:clean(await doAct(a))})}catch(e){res.push({ok:0,m:clean((LAB[a.t]||"Aksi")+" gagal: "+(e.message||e.status||"error"))})}}
+  if(res.some(r=>r.ok)){DT=0;dataCtx(true).catch(()=>{})}
+  return res}
+const ACTSYS=`
+
+KEMAMPUAN MENGELOLA DATA: Kamu BISA menambah, mengubah, dan menghapus data Zaim langsung di database lewat tag aksi. Satu tag per baris, JSON satu baris, tanpa kurung bersarang, tanpa code fence:
+{{act:{"op":"add","t":"task","title":"Kerjain PR","deadline":"2026-11-15"}}}
+{{act:{"op":"add","t":"tx","type":"out","amt":25000,"cat":"Makan","note":"bakso"}}}
+{{act:{"op":"edit","t":"task","ref":3,"done":true}}}
+{{act:{"op":"del","t":"tx","ref":7}}}
+Jenis data (t) dan isinya:
+- task: add (title, deadline opsional) | edit (ref, title/deadline/done) | del (ref)
+- tx: add (type "in" atau "out", amt angka rupiah penuh, cat, note, date opsional) | edit (ref, field yang diubah) | del (ref)
+- sched: add (day 0-6 dengan Senin=0, text, time "HH:MM" opsional, date opsional) | edit (ref, text/time/date) | del (ref)
+- saving: add (name, target, saved) | edit (ref, name/target/saved) | del (ref)
+- todo: add (text) | edit (ref, text/done) | del (ref)
+"ref" WAJIB disalin persis dari tanda [...] di konteks: [task 3] jadi "ref":3, [jadwal 2.0] jadi "ref":"2.0", [todo abc] jadi "ref":"abc". Jangan mengarang ref. Kalau item yang dimaksud tidak ada di konteks, bilang tidak ketemu.
+
+ATURAN MODE CATAT (penting):
+- Kalau Zaim minta mencatat/mengubah/menghapus dan infonya sudah cukup, LANGSUNG tulis tag aksinya, lalu balas SATU kalimat pendek (mis. "Beres, udah kucatat."). Jangan ceramah, jangan komentar di luar permintaan, jangan basa-basi.
+- Kalau ada info penting yang kurang atau ambigu (nominal tidak ada, item mana yang dimaksud, ada beberapa kandidat), JANGAN tulis tag; tanya SATU pertanyaan singkat saja.
+- Boleh pakai default wajar tanpa bertanya: tanggal kosong = hari ini; type tx dari kalimatnya (beli/bayar = out, gaji/dapat uang = in); cat tebak yang paling pas, utamakan kategori yang sudah ada di konteks.
+- Hapus: kalau item spesifiknya jelas, langsung hapus. Kalau massal atau ambigu, konfirmasi dulu.
+- Boleh banyak aksi sekaligus (satu tag per baris).
+- Nominal: "50rb"=50000, "1,5jt"=1500000. Tanggal format YYYY-MM-DD.
+- Hasil asli (✓/✗) ditampilkan aplikasi di bawah balasanmu. Jangan bilang sudah tercatat tanpa menulis tag. Tag di riwayat obrolan sudah dijalankan, jangan ditulis ulang kecuali Zaim minta lagi. Kalau riwayat menunjukkan ✗, jelaskan singkat dan tawarkan coba lagi.
+- Catatan (notes) dan jadwal kelas belum bisa diubah lewat kamu.`;
+const NOLOGIN="\n\nZaim belum masuk akun, jadi kamu tidak bisa mencatat, mengubah, atau menghapus data apa pun. Kalau dia memintanya, bilang singkat suruh Masuk dulu lewat menu riwayat (tombol Masuk).";
 async function send(){
   if(busy){AC&&AC.abort();return}
   const v=ta.value.trim();if(!v)return;if(!KEY){openKey();return}
@@ -250,30 +418,73 @@ async function send(){
   hist.push({role:"user",content:v});const u=add("user",v),el=add("a","");
   let part="";
   const stx=t=>{if(!part)el.innerHTML='<span class="dots"><i></i><i></i><i></i></span><small class="st">'+esc(t)+'</small>'};
-  stx("");AC=new AbortController();await Promise.race([dataCtx(),slp(2500)]);
-  const sys=SYS+"\n\nSekarang: "+new Date().toLocaleString("id-ID",{dateStyle:"full",timeStyle:"short"})+
-    (DCTX?"\n\nKonteks hidup Zaim (dari app Manager, Secretary, Classroom miliknya; hanya untuk kamu tahu). Sebut hanya kalau nyambung dengan obrolan. Kamu cuma teman ngobrol: tidak bisa menambah, mengubah, atau menghapus data apa pun.\n"+DCTX:"");
+  stx("");AC=new AbortController();await Promise.race([dataCtx(true),slp(3500)]);
+  const sys=SYS+"\n\nSekarang: "+new Date().toLocaleString("id-ID",{dateStyle:"full",timeStyle:"short"})+(SES?"\nTanggal hari ini (ISO): "+iso():"")+(SES?ACTSYS:NOLOGIN)+
+    (DCTX?"\n\nKonteks hidup Zaim (dari app Manager, Secretary, Classroom miliknya). Untuk obrolan biasa, sebut hanya kalau nyambung. Jangan mengarang angka; pakai hanya yang ada di konteks.\n"+DCTX+"\n\nWIDGET: aplikasi bisa menampilkan grafik/kartu dari data asli kalau kamu menulis tag di baris sendiri: {{viz:keuangan}} {{viz:tugas}} {{viz:jadwal}} {{viz:tabungan}} {{viz:todo}} {{viz:kelas}} {{viz:catatan}}. Kalau Zaim bertanya soal keuangan (pemasukan, pengeluaran, saldo, boros, kategori, tren): tulis {{viz:keuangan}} lalu penjelasan LENGKAP (angka bulan ini, perbandingan bulan lalu, kategori terbesar, pola atau tren, saran singkat); untuk ini boleh panjang dan boleh pakai poin. Kalau bertanya soal data lain: tulis tag yang cocok lalu 1-3 kalimat komentar. Untuk obrolan biasa jangan pakai tag.":"");
   try{
-    const out=await gen(hist.slice(-16),{sys,sig:AC.signal,onStatus:stx,onText:t=>{part=t;el.innerHTML=md(t);bottom()}});
+    const out=await gen(hist.slice(-16),{sys,temp:.6,sig:AC.signal,onStatus:stx,onText:t=>{part=t;el.innerHTML=md(t);bottom()}});
     if(!out.trim()){el.className="m a err";el.textContent="Aku nggak bisa jawab yang itu. Coba bilang dengan cara lain.";hist.pop()}
-    else{hist.push({role:"assistant",content:out});save();remoteSave(v,out)}
+    else{let full=out;const acts=parseActs(out);
+      if(acts.length){el.innerHTML=md(out,true)+'<small class="st">Mencatat…</small>';bottom();
+        const rs=await runActs(acts);full=out+"\n{{res:"+rs.map(r=>(r.ok?"✓ ":"✗ ")+r.m).join(" | ")+"}}"}
+      el.innerHTML=md(full,true);hydrate(el);chips(el,full);hist.push({role:"assistant",content:full});save();persist(v,full)}
   }catch(e){
-    if(e.userStop&&part.trim()){hist.push({role:"assistant",content:part});save();remoteSave(v,part)}
+    if(e.userStop&&part.trim()){part=part.replace(/\{\{act:[^\n]*\n?/g,"");hist.push({role:"assistant",content:part});save();persist(v,part)}
     else{u.remove();el.remove();hist.pop();ta.value=v;
       if(!e.userStop){const er=add("a","");er.className="m a err";er.textContent=errMsg(e);if(e.status===401||e.status===403)openKey()}}}
   AC=null;busy=false;fit();ta.focus();bottom()}
-// riwayat disimpan ke akun hanya kalau sudah login
-function remoteSave(a,b){if(!SES)return;sbx("confidant_messages","POST",[{role:"user",content:a},{role:"assistant",content:b}],"return=minimal").catch(()=>{})}
+// ---------- riwayat obrolan (database) ----------
 const EMPTY='<div id="empty"><b>Hai, Zaim.</b>Cerita apa aja, aku dengerin.</div>';
-function paint(){log.innerHTML="";if(!hist.length)log.innerHTML=EMPTY;else hist.forEach(m=>add(m.role,m.content))}
+function paint(){log.innerHTML="";if(!hist.length)log.innerHTML=EMPTY;else hist.forEach(m=>add(m.role,m.content,true));bottom()}
+let CHATS=[],CID=null,FP=null;try{CID=localStorage.getItem("zcf-cid")||null}catch(e){}
+const setCid=v=>{CID=v;try{v?localStorage.setItem("zcf-cid",v):localStorage.removeItem("zcf-cid")}catch(e){}};
+const uuid=()=>crypto.randomUUID?crypto.randomUUID():"xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g,c=>{const r=Math.random()*16|0;return(c==="x"?r:r&3|8).toString(16)});
+async function tryN(f,n=3){let er;for(let i=0;i<n;i++){try{return await f()}catch(e){er=e;if(e.status>=400&&e.status<500&&e.status!==429)break;await slp(500*(i+1))}}throw er}
+const PK=()=>"zcf-pend-"+(SES?SES.user.id:"");
+let PEND=[];try{PEND=JSON.parse(localStorage.getItem(PK())||"[]")}catch(e){}
+const pSave=()=>{try{localStorage.setItem(PK(),JSON.stringify(PEND))}catch(e){}};
+// setiap pasangan pesan masuk antrean dulu, baru dikirim; kalau gagal tetap tersimpan lokal dan dicoba lagi
+function persist(a,b){if(!SES)return;if(!CID)setCid(uuid());
+  let c=CHATS.find(x=>x.id===CID);if(!c){c={id:CID,title:a.replace(/\s+/g," ").slice(0,40),updated_at:""};CHATS.unshift(c)}
+  c.updated_at=new Date().toISOString();CHATS=[c,...CHATS.filter(x=>x!==c)];
+  PEND.push({cid:CID,t:c.title,a,b});pSave();paintDrawer();flushPend()}
+async function push(x){
+  await tryN(()=>sbx("confidant_chats?on_conflict=id","POST",[{id:x.cid,title:x.t}],"resolution=ignore-duplicates,return=minimal"));
+  await tryN(()=>sbx("confidant_messages","POST",[{chat_id:x.cid,role:"user",content:x.a},{chat_id:x.cid,role:"assistant",content:x.b}],"return=minimal"));
+  sbx("confidant_chats?id=eq."+x.cid,"PATCH",{updated_at:new Date().toISOString()}).catch(()=>{})}
+function flushPend(){if(FP||!SES||!PEND.length)return;
+  FP=(async()=>{let ok=true;while(PEND.length){try{await push(PEND[0]);PEND.shift();pSave()}catch(e){ok=false;HST="Riwayat belum tersimpan"+(e&&e.status?" ("+e.status+")":"");dsr();setTimeout(flushPend,15000);break}}
+    if(ok){HST="";dsr()}})().finally(()=>{FP=null})}
+const fdt=s=>{const d=new Date(s);return isNaN(d)?"":d.toDateString()===new Date().toDateString()?d.toLocaleTimeString("id-ID",{hour:"2-digit",minute:"2-digit"}):d.toLocaleDateString("id-ID",{day:"numeric",month:"short"})};
+function paintDrawer(){const l=$("dl");l.innerHTML="";
+  if(!SES){l.innerHTML='<div class="dn">Masuk untuk menyimpan riwayat obrolan ke akunmu.</div>';return}
+  if(!CHATS.length){l.innerHTML='<div class="dn">Belum ada obrolan.</div>';return}
+  CHATS.forEach(c=>{const r=document.createElement("div");r.className="ci"+(c.id===CID?" on":"");
+    r.innerHTML="<div class='ct'><b></b><small></small></div><button class='ib' aria-label='Ubah nama'>✎</button><button class='ib' aria-label='Hapus'>✕</button>";
+    r.querySelector("b").textContent=c.title;r.querySelector("small").textContent=fdt(c.updated_at);
+    const bs=r.querySelectorAll("button");r.onclick=()=>openChat(c.id);bs[0].onclick=e=>{e.stopPropagation();renChat(c)};bs[1].onclick=e=>{e.stopPropagation();delChat(c)};l.appendChild(r)})}
+const openDrawer=()=>{paintDrawer();$("drw").classList.add("show");$("dov").classList.add("show")},closeDrawer=()=>{$("drw").classList.remove("show");$("dov").classList.remove("show")};
+$("menu").onclick=openDrawer;$("dov").onclick=closeDrawer;
+function newChat(){setCid(null);hist=[];save();paint();paintDrawer()}
+async function loadMsgs(id){const r=await rows("confidant_messages?select=role,content&chat_id=eq."+id+"&order=id.asc&limit=300");if(CID!==id)return;hist=r.filter(m=>m.content);save();paint()}
+async function openChat(id){if(busy){return}closeDrawer();if(id===CID&&hist.length)return;setCid(id);hist=[];log.innerHTML='<div class="m a err">Memuat…</div>';paintDrawer();
+  try{await loadMsgs(id)}catch(e){log.innerHTML='<div class="m a err">Gagal memuat obrolan.</div>'}}
+async function renChat(c){const t=(prompt("Ubah nama obrolan",c.title)||"").trim().slice(0,60);if(!t||t===c.title)return;const o=c.title;c.title=t;paintDrawer();
+  try{await sbx("confidant_chats?id=eq."+c.id,"PATCH",{title:t})}catch(e){c.title=o;paintDrawer();alert("Gagal mengubah nama.")}}
+async function delChat(c){if(busy||!confirm("Hapus obrolan “"+c.title+"”?"))return;
+  try{await sbx("confidant_chats?id=eq."+c.id,"DELETE",undefined,"return=minimal")}catch(e){alert("Gagal menghapus. Coba lagi.");return}
+  PEND=PEND.filter(x=>x.cid!==c.id);pSave();CHATS=CHATS.filter(x=>x!==c);if(c.id===CID)newChat();else paintDrawer()}
 async function loadRemote(){if(!SES)return;
-  try{const r=await sbx("confidant_messages?select=role,content&order=id.desc&limit=60")||[];
-    hist=r.reverse().filter(m=>m&&m.content);save();paint()}catch(e){}dataCtx()}
+  try{CHATS=await rows("confidant_chats?select=id,title,updated_at&order=updated_at.desc&limit=100")}catch(e){HST="Riwayat belum aktif (jalankan SQL 10)";dsr()}
+  PEND.forEach(x=>{if(!CHATS.some(c=>c.id===x.cid))CHATS.unshift({id:x.cid,title:x.t,updated_at:new Date().toISOString()})});
+  paintDrawer();flushPend();
+  if(CID&&CHATS.some(c=>c.id===CID)){if(!PEND.some(x=>x.cid===CID))try{await loadMsgs(CID)}catch(e){}}
+  else if(CID){setCid(null);hist=[];save();paint()}
+  dataCtx()}
 sb.onclick=send;
 ta.addEventListener("input",fit);
 ta.addEventListener("keydown",e=>{if(e.key==="Enter"&&!e.shiftKey&&!e.isComposing&&matchMedia("(hover:hover)").matches){e.preventDefault();if(!busy)send()}});
-$("new").onclick=()=>{if(!hist.length||busy)return;if(!confirm("Mulai obrolan baru? Riwayat sekarang akan dihapus."))return;
-  hist=[];save();paint();if(SES)sbx("confidant_messages?user_id=eq."+SES.user.id,"DELETE",undefined,"return=minimal").catch(()=>{})};
+$("new").onclick=()=>{if(!hist.length||busy)return;newChat()};
 // ---------- API key ----------
 function openKey(){$("kin").value="";$("kerr").textContent="";$("kdel").style.display=KEY?"":"none";$("kclose").style.display=KEY?"":"none";$("modal").classList.add("show");setTimeout(()=>$("kin").focus(),200)}
 $("gear").onclick=openKey;$("kclose").onclick=()=>$("modal").classList.remove("show");
@@ -284,7 +495,7 @@ $("ksave").onclick=async()=>{const k=$("kin").value.trim();if(!k){$("kerr").text
   catch(e){KEY=old;$("kerr").textContent=errMsg(e)}
   b.disabled=false};
 $("kin").addEventListener("keydown",e=>{if(e.key==="Enter")$("ksave").click()});
-$("ds").onclick=()=>dataCtx(true);
+$("ds").onclick=()=>{dataCtx(true);flushPend()};
 // ---------- login ----------
 const GUEST=(()=>{try{return localStorage.getItem("zcf-guest")==="1"}catch(e){return false}})();
 $("acc").textContent=SES?"Keluar":"Masuk";
@@ -314,7 +525,7 @@ $("acc").onclick=()=>{if(!SES){$("aerr").textContent="";$("auth").classList.add(
   SES=null;try{localStorage.removeItem("zcf-ses")}catch(e){}location.reload()};
 // ---------- mulai ----------
 if(!SES&&!GUEST)$("auth").classList.add("show");
-else{if(hist.length)hist.forEach(m=>add(m.role,m.content));fit();if(!KEY)openKey();loadRemote()}
+else{if(hist.length)hist.forEach(m=>add(m.role,m.content,true));fit();if(!KEY)openKey();loadRemote()}
 </script>
 </body>
 </html>
