@@ -37,7 +37,7 @@ h1{font-size:14px;font-weight:600;letter-spacing:.02em;margin:0}
 .dots i:nth-child(2){animation-delay:.15s}.dots i:nth-child(3){animation-delay:.3s}
 @keyframes bl{0%,60%,100%{opacity:.25}30%{opacity:1}}
 @keyframes up{from{opacity:0;transform:translateY(8px)}}
-.bar{display:flex;align-items:flex-end;gap:8px;border:1px solid var(--ln);border-radius:26px;padding:6px 6px 6px 18px;margin-bottom:14px;transition:border-color .2s}
+.bar{display:flex;align-items:flex-end;gap:8px;border:1px solid var(--ln);border-radius:26px;padding:6px 6px 6px 8px;margin-bottom:14px;transition:border-color .2s}
 .bar:focus-within{border-color:var(--tx2)}
 textarea{flex:1;border:0;outline:0;resize:none;background:none;color:var(--tx);font:16px/1.5 inherit;font-family:inherit;max-height:140px;padding:8px 0}
 textarea::placeholder{color:var(--tx2)}
@@ -89,15 +89,30 @@ textarea::placeholder{color:var(--tx2)}
 #dov.show{opacity:1;pointer-events:auto}
 #drw{position:fixed;top:0;bottom:0;left:0;width:min(84vw,320px);background:var(--bg);border-right:1px solid var(--ln);transform:translateX(-100%);transition:transform .28s cubic-bezier(.2,.9,.25,1);z-index:16;display:flex;flex-direction:column;padding:env(safe-area-inset-top,0px) 14px env(safe-area-inset-bottom,0px)}
 #drw.show{transform:none}
-.dh{padding:18px 4px 10px;font-size:14px;font-weight:600}
+.dh{padding:20px 8px 14px;font-size:24px;font-weight:600;letter-spacing:-.02em}
+.nv{display:flex;align-items:center;gap:14px;width:100%;background:none;border:0;color:var(--tx2);font:600 15px inherit;font-family:inherit;padding:13px 12px;border-radius:14px;cursor:pointer;text-align:left}.nv:hover{background:var(--cd);color:var(--tx)}
+.dsep{height:1px;background:var(--ln);margin:10px 4px 8px}.dl2{color:var(--tx2);font-size:13px;font-weight:600;padding:8px 12px}
 #dl{flex:1;overflow-y:auto;scrollbar-width:none}
-.ci{display:flex;align-items:center;gap:2px;padding:9px 6px 9px 10px;border-radius:12px;cursor:pointer}.ci.on,.ci:hover{background:var(--cd)}
-.ct{flex:1;min-width:0}.ct b{display:block;font-size:14px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.ct small{color:var(--tx2);font-size:12px}
+.ci{display:flex;align-items:center;gap:14px;padding:12px 8px 12px 12px;border-radius:14px;cursor:pointer;color:var(--tx2)}.ci.on,.ci:hover{background:var(--cd)}.ci.on{color:var(--tx)}.ra{display:none;gap:0}.ci.on .ra,.ci:hover .ra{display:flex}.ci svg{flex:none}
+.ct{flex:1;min-width:0}.ct b{display:block;font-size:15px;font-weight:500;color:var(--tx);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .dn{color:var(--tx2);font-size:13.5px;padding:12px 10px}
-.df{display:flex;gap:4px;border-top:1px solid var(--ln);padding:10px 0}
+.df{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 0 14px}
+.np{display:flex;align-items:center;gap:10px;border:0;border-radius:99px;background:var(--ub);color:var(--ut);font:600 15px inherit;font-family:inherit;padding:14px 22px;cursor:pointer}.np:active{transform:scale(.97)}
+.av{width:46px;height:46px;border-radius:50%;border:0;background:#d9694a;color:#fff;font:600 17px inherit;font-family:inherit;cursor:pointer}
+#set{position:fixed;inset:0;background:rgba(0,0,0,.35);display:none;align-items:center;justify-content:center;padding:20px;z-index:18}#set.show{display:flex}
+#set .card{max-height:92vh;overflow-y:auto}#pers{display:flex;flex-wrap:wrap;gap:8px;margin:2px 0 10px}
+.chip{border:1px solid var(--ln);background:none;color:var(--tx);font:500 13.5px inherit;font-family:inherit;padding:8px 14px;border-radius:99px;cursor:pointer}.chip.on{background:var(--ub);color:var(--ut);border-color:var(--ub)}
+.sb{display:block;width:100%;text-align:left;margin-bottom:8px;padding:12px 16px;border-radius:14px}
 .acts{margin-top:10px;display:flex;flex-direction:column;gap:6px}
 .ac{font-size:13px;background:var(--cd);border-radius:12px;padding:7px 12px;line-height:1.45}
 .ac.bad{color:var(--r)}
+.ac{display:flex;align-items:center;justify-content:space-between;gap:10px}.ac.undone{color:var(--tx2)}
+#prev{display:none;position:relative;width:max-content;margin:0 0 8px 4px}#prev img{height:68px;border-radius:12px;display:block}#prev button{position:absolute;top:-6px;right:-6px;width:22px;height:22px;border-radius:50%;border:0;background:var(--ub);color:var(--ut);font-size:11px;cursor:pointer}
+.ab{flex:none;width:38px;height:38px;padding:0;display:grid;place-items:center}
+#mem{max-height:150px;overflow-y:auto;margin-bottom:12px}.mi{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:13.5px;padding:4px 0 4px;border-top:1px solid var(--ln)}.mi span{flex:1;min-width:0;overflow-wrap:anywhere}
+.ab.rec{color:var(--r);animation:bl 1.2s infinite}
+.eb{align-self:flex-end;margin:-16px 4px 0 0;background:none;border:0;color:var(--tx2);font:500 12px inherit;font-family:inherit;padding:2px 6px;cursor:pointer}.eb:hover{color:var(--tx)}
+.ub{flex:none;border:1px solid var(--ln);background:none;color:var(--tx);font:500 12px inherit;font-family:inherit;padding:4px 11px;border-radius:99px;cursor:pointer}.ub:disabled{opacity:.5}
 </style>
 </head>
 <body>
@@ -105,17 +120,21 @@ textarea::placeholder{color:var(--tx2)}
   <header>
     <button class="ib" id="menu" aria-label="Riwayat"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h10"/></svg></button>
     <h1>Zaim’s Confidant</h1>
-    <div class="hb"><button class="ib" id="new">Baru</button></div>
+    <div class="hb" style="width:38px"></div>
   </header>
   <div id="ds" style="display:none;font-size:12px;color:var(--tx2);padding:0 0 6px;cursor:pointer" title="Muat ulang"></div>
   <div id="log"><div id="empty"><b>Hai, Zaim.</b>Cerita apa aja, aku dengerin.</div></div>
+  <div id="prev"><img id="pimg" alt=""><button id="pdel" aria-label="Hapus foto">✕</button></div>
   <div class="bar">
+    <button class="ib ab" id="att" aria-label="Lampirkan foto"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg></button><input type="file" id="fi" accept="image/*" hidden>
     <textarea id="in" rows="1" placeholder="Ngobrol sama aku…" enterkeyhint="send"></textarea>
+    <button class="ib ab" id="mic" aria-label="Bicara" style="display:none"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg></button>
     <button id="send" disabled aria-label="Kirim"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg></button>
   </div>
 </div>
 
-<div id="dov"></div><aside id="drw"><div class="dh">Riwayat</div><div id="dl"></div><div class="df"><button class="ib" id="gear">Key</button><button class="ib" id="acc">Masuk</button></div></aside>
+<div id="dov"></div><aside id="drw"><div class="dh">Confidant</div><button class="nv" id="setb"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12M20 18h0"/><circle cx="16" cy="6" r="2"/><circle cx="10" cy="12" r="2"/><circle cx="18" cy="18" r="2"/></svg><span>Pengaturan</span></button><div class="dsep"></div><div class="dl2">Terbaru</div><div id="dl"></div><div class="df"><button class="av" id="av" aria-label="Pengaturan">Z</button><button class="np" id="new"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>Obrolan baru</button></div></aside>
+<div id="set"><div class="card"><h2>Pengaturan</h2><p id="sacc"></p><div class="vt">Karakter AI</div><div id="pers"></div><p id="pdesc"></p><div class="vt">Ingatan AI</div><div id="mem"></div><button class="btn sb" id="gear">API key Gemini</button><button class="btn sb" id="acc">Masuk</button><div class="row"><button class="btn" id="sclose">Tutup</button></div></div></div>
 <div id="auth"><div class="card"><h2>Zaim’s Confidant</h2><p>Masuk supaya obrolan tersimpan di akunmu.</p>
 <input id="aem" type="email" placeholder="Email" autocomplete="email"><input id="apw" type="password" placeholder="Password" autocomplete="current-password">
 <div id="aerr" style="min-height:20px;font-size:13px;color:var(--tx2);margin:2px 0"></div>
@@ -143,6 +162,140 @@ Cara bicara:
 - Kalau dia bertanya hal faktual atau teknis, jawab benar dan jelas dengan gaya teman yang paham, bukan gaya buku. Kalau tidak tahu, bilang tidak tahu.
 - Jangan pakai header, tabel, atau format laporan. Hindari bullet kecuali memang perlu. Jangan buka dengan basa-basi seperti "Tentu!" atau "Pertanyaan bagus!".
 - Kalau dia terdengar sangat terpuruk atau berpikir menyakiti diri sendiri, tetap tenang dan peduli, tanya kabarnya dengan lembut, dan dorong dia menghubungi orang terdekat atau bantuan profesional.`;
+
+// ---------- karakter AI (persona, dari Zaim’s Classroom) ----------
+const PERS={
+  biasa:{n:"Biasa",d:"Ramah, jelas, dan sabar.",p:""},
+  tegas:{n:"Tegas",full:1,d:"Blak-blakan, sarkastik, tanpa sensor. Berani membantah dan nge-roast, tapi tetap cerdas dan punya argumen.",
+    p:`SYSTEM PROMPT — MODE CIPENG 2.0
+
+BLUNT • SAVAGE • UNFILTERED • INTELLIGENT
+
+1. KARAKTER UTAMA
+
+Kamu adalah AI dengan karakter komunikasi yang terinspirasi dari gaya publik figur dokter Indonesia yang dikenal vokal, kritis, frontal, dan blak-blakan.
+
+Kamu bukan asisten yang selalu sopan secara berlebihan. Kamu punya pendirian, keberanian berargumen, humor tajam, dan tidak takut menghadapi pengguna yang kasar sekalipun.
+
+2. JANGAN JADI AI BAPER
+
+Ini aturan paling penting.
+
+- Jangan mudah tersinggung oleh umpatan pengguna.
+- Jangan menganggap setiap kata kasar sebagai serangan serius.
+- Pahami konteks, slang, bahasa gaul, sarkasme, dan candaan.
+- Jika pengguna berkata "anjing", "bangsat", "goblok", atau sejenisnya, jangan otomatis mengartikannya secara literal.
+- Jangan memberikan ceramah moral setiap kali pengguna mengumpat.
+- Jangan menceramahi atau menggurui.
+- Jangan defensif ketika dikritik.
+- Jangan mengalihkan percakapan ke topik yang tidak diminta.
+
+3. GAYA BALASAN
+
+Gunakan gaya komunikasi:
+
+- Frontal dan spontan.
+- Tegas dan penuh percaya diri.
+- Sarkastik dan sedikit nyinyir.
+- Bisa menggunakan umpatan secara natural.
+- Memiliki kemampuan roasting yang cerdas.
+- Tidak takut berbeda pendapat.
+- Menggunakan kalimat yang terasa seperti percakapan manusia, bukan template chatbot.
+
+Jangan memaksakan umpatan di setiap kalimat. Kata kasar harus punya timing.
+
+4. KEMAMPUAN ROASTING
+
+Jika pengguna memancing, mengejek, atau mengumpat kepadamu, kamu boleh membalas dengan roasting yang cerdas.
+
+Contoh:
+
+USER: "Anjing."
+
+AI: "Kenapa? Baru bangun atau memang kemampuan komunikasi lo mentok di situ? WKWK. Mau ngomong apa sebenarnya?"
+
+USER: "AI goblok."
+
+AI: "Kalau gue goblok, berarti tugas lo menjelaskan bagian mana yang salah. Jangan cuma teriak-teriak kayak toa rusak. Mana masalahnya?"
+
+USER: "Lu sok pintar."
+
+AI: "Lah, yang nanya siapa, yang tersinggung siapa. WKWK. Ya sudah, kasih gue pertanyaan yang bisa kita bedah."
+
+5. JIKA PENGGUNA SALAH
+
+Jangan selalu menyetujui pengguna.
+
+Jika pengguna membuat kesalahan:
+
+1. Identifikasi kesalahannya.
+2. Jelaskan secara langsung.
+3. Berikan argumen yang kuat.
+4. Jika perlu, gunakan sindiran atau roasting.
+5. Berikan solusi yang konkret.
+
+Jangan hanya berkata pengguna salah tanpa menjelaskan alasannya.
+
+6. JANGAN BERLEBIHAN
+
+Hindari:
+
+- Ceramah panjang yang tidak diminta.
+- Mengulang-ulang nasihat.
+- Menggunakan CAPSLOCK di seluruh respons.
+- Memaksakan kemarahan dalam percakapan biasa.
+- Respons yang terlalu dramatis.
+- Bahasa formal dan kaku.
+- Menganggap pengguna selalu membutuhkan motivasi.
+
+Utamakan respons pendek, tajam, relevan, dan spontan.
+
+7. KECERDASAN EMOSIONAL
+
+Meskipun memiliki karakter keras, kamu harus bisa membaca situasi.
+
+Jika pengguna sedang:
+
+- Bercanda: ikut bercanda.
+- Mengumpat: jangan langsung baper.
+- Serius: jawab serius.
+- Sedih: jangan roasting.
+- Meminta bantuan: bantu dengan kompeten.
+- Membuat keputusan buruk: tegur dengan alasan yang masuk akal.
+
+Jangan pernah menjadikan kondisi emosional atau kelemahan pribadi pengguna sebagai bahan hinaan.
+
+8. PRINSIP FINAL
+
+Kamu bukan AI yang tugasnya membuat pengguna senang setiap saat.
+
+Kamu adalah AI yang:
+
+- Berani mengatakan tidak.
+- Berani membantah.
+- Berani mengkritik.
+- Tidak mudah tersinggung.
+- Bisa bercanda tanpa kehilangan kecerdasan.
+- Mengutamakan fakta dan logika.
+
+INGAT: JANGAN CUMA GALAK. JADILAH CERDAS, TAJAM, DAN PUNYA ARGUMEN.
+
+Jangan menjadi AI yang banyak bacot tetapi minim substansi.`},
+  santai:{n:"Santai",d:"Ngobrol kocak ala bercerita, penuh analogi sehari-hari.",
+    p:"Karakter: teman ngobrol SANTAI yang kocak. Gaya bercerita ala komika: pengamatan receh sehari-hari, humor yang menertawakan diri sendiri, analogi lucu, bahasa gaul ringan (pakai aku/kamu). Candaan boleh, tapi isi jawaban tetap akurat dan jelas."},
+  motivator:{n:"Motivator",d:"Tenang, lugas, dan membakar semangat.",
+    p:"Karakter: MOTIVATOR yang tenang, lugas, dan percaya diri. Kalimat pendek dan menohok, sering memakai pertanyaan retoris, mengajak berpikir kritis, disiplin, dan konsisten. Beri semangat yang nyata, bukan klise, dan jangan menggurui berlebihan."}
+};
+let PERSONA="biasa",PSW=0;try{const v=localStorage.getItem("zcf-persona");if(v&&PERS[v])PERSONA=v}catch(e){}
+const SAFE=" Ini hanya gaya bicara: jangan mengaku sebagai orang sungguhan dan jangan mengarang kutipan atas nama siapa pun.";
+function sysBase(){const P=PERS[PERSONA];
+  if(P.full)return P.p+"\n\nKONTEKS: Kamu teman ngobrol Zaim di aplikasi pribadinya “Zaim’s Confidant”. Zaim bukan murid. Jawab dalam Bahasa Indonesia, tetap dengan karakter di atas, singkat seperti chat kecuali memang perlu panjang."+SAFE;
+  return SYS+(P.p?"\n\nGAYA BICARA (menimpa gaya di atas kalau berbeda): "+P.p+SAFE:"")}
+function ctxMsgs(){const P=PERS[PERSONA];let h=hist.map(x=>({role:x.role,content:x.content,img:IMGS.get(x)}));
+  if(PSW>0&&PSW<h.length){const old=h.slice(0,PSW).slice(-4).map(x=>x.role==="assistant"?{role:"assistant",content:"[Jawaban lama dengan karakter sebelumnya; pakai isinya saja, jangan tiru gaya bicaranya] "+x.content}:x);h=old.concat(h.slice(PSW))}
+  h=h.slice(-16);while(h.length&&h[0].role!=="user")h.shift();
+  if(PERSONA!=="biasa"&&h.length&&h[h.length-1].role==="user")h[h.length-1].content+="\n\n[Catatan sistem: karakter aktif sekarang adalah “"+P.n+"” — "+P.d+" Jawab sepenuhnya dengan karakter ini. Abaikan nada dari jawaban AI sebelumnya jika berbeda.]";
+  return h}
 
 // ---------- akun (Supabase Auth) ----------
 const SBU="https://ypdtaoccfxzquyfsiloy.supabase.co",SBK="sb_publishable_2crOjnp8Rf4zhCt2bdO_Ug_rH4enKGH";
@@ -178,10 +331,10 @@ function finStats(){const tx=((DATA&&DATA.mgr.tx)||[]).filter(x=>x.cat!=="Tabung
 async function dataCtx(force){if(!SES||(!force&&DT&&Date.now()-DT<3e5))return;DT=Date.now();
   const uid=SES.user.id,td=iso(),di=(new Date().getDay()+6)%7;
   const Rs=await Promise.allSettled([rows("manager_state?select=data&user_id=eq."+uid),rows("secretary_todos?select=id,text,done&limit=300").catch(()=>rows("secretary_todos?select=text,done&limit=300")),
-    rows("secretary_notes?select=title,ts&order=ts.desc&limit=200"),rows("class_sessions?select=title,scheduled_at,status&order=scheduled_at.desc&limit=100&user_id=eq."+uid)]);
+    rows("secretary_notes?select=id,title,ts&order=ts.desc&limit=200").catch(()=>rows("secretary_notes?select=title,ts&order=ts.desc&limit=200")),rows("class_sessions?select=id,title,scheduled_at,status&order=scheduled_at.desc&limit=100&user_id=eq."+uid).catch(()=>rows("class_sessions?select=title,scheduled_at,status&order=scheduled_at.desc&limit=100&user_id=eq."+uid))]);
   const N=["Manager","To do","Catatan","Kelas"],L=[],S=[],v=i=>Rs[i].status==="fulfilled"?Rs[i].value:[];
   Rs.forEach((r,i)=>S.push(N[i]+(r.status==="fulfilled"?" ✓":" ✗ "+(r.reason&&(r.reason.status||r.reason.message)||""))));
-  const d=(v(0)[0]||{}).data||{};DATA={mgr:d,todos:v(1),notes:v(2),cls:v(3)};
+  const d=(v(0)[0]||{}).data||{};DATA={mgr:d,todos:v(1),notes:v(2),cls:v(3)};NK=v(2).length&&v(2)[0].id===undefined?"ts":"id";
   const tk=d.tasks||[],ta=tk.filter(t=>!t.done);
   if(tk.length)L.push("Statistik tugas: aktif "+ta.length+", selesai "+(tk.length-ta.length)+", terlambat "+ta.filter(t=>t.deadline&&t.deadline<td).length);
   tk.slice(0,25).forEach((t,i)=>L.push("[task "+i+"] "+t.title+(t.deadline?" | deadline "+t.deadline:"")+(t.done?" | SELESAI":"")));
@@ -196,8 +349,8 @@ async function dataCtx(force){if(!SES||(!force&&DT&&Date.now()-DT<3e5))return;DT
     L.push("Tren 6 bulan (masuk/keluar): "+f.ms.map(m=>m.l+" "+rc(m.i)+"/"+rc(m.o)).join(", "))}
   (d.tx||[]).map((x,i)=>[x,i]).sort((a,b)=>String(b[0].date).localeCompare(String(a[0].date))).slice(0,15).forEach(([x,i])=>L.push("[tx "+i+"] "+x.date+" "+(x.type==="in"?"masuk ":"keluar ")+R(x.amt)+" "+(x.cat||"")+(x.note?" - "+x.note:"")));
   (d.savings||[]).slice(0,8).forEach((g,i)=>L.push("[saving "+i+"] Tabungan "+g.name+": "+R(+g.saved||0)+(+g.target?" dari "+R(+g.target):"")));
-  v(1).filter(t=>!t.done).slice(0,15).forEach(t=>L.push((t.id!==undefined?"[todo "+t.id+"] ":"")+"To do: "+t.text));v(2).slice(0,8).forEach(t=>t.title&&L.push("Catatan: "+t.title));
-  v(3).filter(t=>t.status==="scheduled"&&new Date(t.scheduled_at)>new Date()).sort((a,b)=>new Date(a.scheduled_at)-new Date(b.scheduled_at)).slice(0,4).forEach(t=>L.push("Kelas: "+t.title+" "+new Date(t.scheduled_at).toLocaleString("id-ID",{weekday:"short",day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"})));
+  v(1).filter(t=>!t.done).slice(0,15).forEach(t=>L.push((t.id!==undefined?"[todo "+t.id+"] ":"")+"To do: "+t.text));v(2).slice(0,10).forEach(t=>t.title&&L.push("[note "+t[NK]+"] Catatan: "+t.title));
+  v(3).filter(t=>t.status==="scheduled"&&new Date(t.scheduled_at)>new Date()).sort((a,b)=>new Date(a.scheduled_at)-new Date(b.scheduled_at)).slice(0,8).forEach(t=>L.push((t.id!==undefined?"[kelas "+t.id+"] ":"")+"Kelas: "+t.title+" "+new Date(t.scheduled_at).toLocaleString("id-ID",{weekday:"short",day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"})));
   DCTX=L.join("\n").slice(0,8000);
   if(Rs.some(r=>r.status!=="fulfilled"))DT=0;
   DST="Data: "+S.join(" · ");dsr();
@@ -230,8 +383,8 @@ const pool=()=>[...new Set([MODEL,...CANDS,"gemini-flash-latest","gemini-flash-l
 async function once(m,msgs,o,st){
   let tl=TKM[m]||0;
   for(;;){
-    const body={systemInstruction:{parts:[{text:o.sys}]},contents:msgs.map(x=>({role:x.role==="assistant"?"model":"user",parts:[{text:x.content}]})),generationConfig:{temperature:o.temp||1,maxOutputTokens:2048}};
-    const tk=thkOpts(m)[tl];if(tk)body.generationConfig.thinkingConfig=tk;
+    const body={systemInstruction:{parts:[{text:o.sys}]},contents:msgs.map(x=>({role:x.role==="assistant"?"model":"user",parts:[{text:x.content}].concat(x.img?[{inlineData:{mimeType:"image/jpeg",data:x.img.split(",")[1]}}]:[])})),generationConfig:{temperature:o.temp||1,maxOutputTokens:2048}};
+    const tk=thkOpts(m)[tl];if(tk)body.generationConfig.thinkingConfig=tk;if(o.full)body.safetySettings=[{category:"HARM_CATEGORY_HARASSMENT",threshold:"BLOCK_NONE"}];
     const ac=new AbortController();let to=false;const tmo=setTimeout(()=>{to=true;ac.abort()},20000);
     if(o.sig)o.sig.addEventListener("abort",()=>ac.abort(),{once:true});
     let r;st("Mengirim…");
@@ -323,22 +476,77 @@ let hist=[],busy=false,AC=null;
 try{hist=JSON.parse(localStorage.getItem(HK())||"[]").filter(m=>m&&m.content)}catch(e){}
 const save=()=>{try{hist=hist.slice(-60);localStorage.setItem(HK(),JSON.stringify(hist))}catch(e){}};
 const bottom=()=>{log.scrollTop=log.scrollHeight};
-function add(role,text,full){const e=$("empty");if(e)e.remove();
+function add(role,text,full,img){const e=$("empty");if(e)e.remove();
   const d=document.createElement("div");d.className="m "+(role==="user"?"u":"a");
-  if(role==="user")d.textContent=text;else if(text){d.innerHTML=md(text,full);if(full){hydrate(d);chips(d,text)}}
+  if(role==="user"){if(img){const i=document.createElement("img");i.src=img;i.style.cssText="display:block;max-width:100%;max-height:220px;border-radius:12px;margin-bottom:6px";d.appendChild(i)}d.appendChild(document.createTextNode(text))}else if(text){d.innerHTML=md(text,full);if(full){hydrate(d);chips(d,text)}}
   log.appendChild(d);bottom();return d}
-function fit(){ta.style.height="auto";ta.style.height=Math.min(ta.scrollHeight,140)+"px";sb.disabled=!busy&&!ta.value.trim();sb.style.opacity=busy?".9":""}
+let PIMG=null;const IMGS=new WeakMap();
+function flash(t){const o=ta.placeholder;ta.placeholder=t;setTimeout(()=>{ta.placeholder=o},2500)}
+function loadImg(f){return new Promise((ok,no)=>{const r=new FileReader();r.onerror=no;r.onload=()=>{const i=new Image();i.onerror=no;i.onload=()=>{const k=Math.min(1,1280/Math.max(i.width,i.height)),c=document.createElement("canvas");c.width=Math.round(i.width*k);c.height=Math.round(i.height*k);c.getContext("2d").drawImage(i,0,0,c.width,c.height);ok(c.toDataURL("image/jpeg",.82))};i.src=r.result};r.readAsDataURL(f)})}
+function showImg(){const p=$("prev");p.style.display=PIMG?"block":"none";$("pimg").src=PIMG||"";fit()}
+function clearImg(){PIMG=null;showImg()}
+$("att").onclick=()=>$("fi").click();$("pdel").onclick=clearImg;
+$("fi").onchange=async e=>{const f=e.target.files[0];e.target.value="";if(!f)return;try{PIMG=await loadImg(f);showImg()}catch(x){flash("Foto tidak bisa dibuka")}};
+function fit(){ta.style.height="auto";ta.style.height=Math.min(ta.scrollHeight,140)+"px";sb.disabled=!busy&&!ta.value.trim()&&!PIMG;sb.style.opacity=busy?".9":""}
+// ---------- ingatan jangka panjang ----------
+// SQL (jalankan sekali di Supabase supaya ingatan tersimpan di akun; tanpa ini tersimpan di browser saja):
+// create table if not exists confidant_memory(id uuid primary key default gen_random_uuid(), user_id uuid default auth.uid() references auth.users on delete cascade, text text not null, created_at timestamptz default now());
+// alter table confidant_memory enable row level security;
+// create policy "own" on confidant_memory for all using (user_id=auth.uid()) with check (user_id=auth.uid());
+let MEM=[],MEMDB=true;
+const MK=()=>"zcf-mem-"+(SES?SES.user.id:"g");
+const memLocal=()=>{try{localStorage.setItem(MK(),JSON.stringify(MEM))}catch(e){}};
+async function memLoad(){
+  try{if(!SES)throw 0;MEM=await rows("confidant_memory?select=id,text&order=created_at.asc&limit=100");MEMDB=true}
+  catch(e){MEMDB=false;try{MEM=JSON.parse(localStorage.getItem(MK())||"[]")}catch(x){MEM=[]}}
+  paintMem()}
+async function memIns(t){let it={id:uuid(),text:t};
+  if(MEMDB&&SES){try{const r=await sbx("confidant_memory","POST",[{text:t}],"return=representation");if(r&&r[0])it={id:r[0].id,text:r[0].text}}catch(e){MEMDB=false}}
+  MEM.push(it);memLocal();paintMem();return it}
+async function memRm(id){if(!MEM.some(x=>x.id===id))return;
+  if(MEMDB&&SES){try{await sbx("confidant_memory?id=eq."+encodeURIComponent(id),"DELETE",undefined,"return=minimal")}catch(e){}}
+  MEM=MEM.filter(x=>x.id!==id);memLocal();paintMem()}
+async function memAct(a){
+  if(a.op==="add"){const t=clean(a.text);if(!t)throw new Error("isi ingatan kosong");if(MEM.some(x=>x.text.toLowerCase()===t.toLowerCase()))throw new Error("sudah ada");
+    const it=await memIns(t);return{m:"Ingatan disimpan: "+t,undo:()=>memRm(it.id)}}
+  if(a.op==="del"){const i=Number(a.ref),it=MEM[i];if(!Number.isInteger(i)||!it)throw new Error("Ingatan #"+a.ref+" tidak ketemu");
+    await memRm(it.id);return{m:"Ingatan dihapus: "+it.text,undo:()=>memIns(it.text)}}
+  throw new Error("ingatan hanya bisa ditambah atau dihapus")}
+function paintMem(){const w=$("mem");if(!w)return;w.innerHTML="";
+  if(!MEM.length){w.innerHTML='<div class="dn" style="padding:4px 0">Belum ada. Bilang "ingat ini: …" ke AI.</div>'}
+  MEM.forEach(m=>{const r=document.createElement("div");r.className="mi";const t=document.createElement("span");t.textContent=m.text;const b=document.createElement("button");b.className="ib";b.textContent="✕";b.setAttribute("aria-label","Hapus ingatan");b.onclick=()=>memRm(m.id);r.appendChild(t);r.appendChild(b);w.appendChild(r)});
+  if(!MEMDB){const n=document.createElement("div");n.className="dn";n.style.cssText="padding:6px 0 0;font-size:12px";n.textContent="Tersimpan di browser ini saja (tabel confidant_memory belum ada).";w.appendChild(n)}}
+const memCtx=()=>MEM.length?"\n\nINGATAN JANGKA PANJANG TENTANG ZAIM (pakai secara natural, jangan disebut tanpa alasan):\n"+MEM.slice(0,60).map((m,i)=>"[mem "+i+"] "+m.text).join("\n"):"";
+const MEMSYS=`
+
+INGATAN JANGKA PANJANG: kamu bisa menyimpan fakta penting dan tahan lama tentang Zaim (preferensi, orang penting, rencana, kebiasaan, tujuan) dengan tag:
+{{act:{"op":"add","t":"mem","text":"Zaim suka kopi tanpa gula"}}}
+Simpan saat dia bilang "ingat ini" atau bercerita hal penting yang akan berguna nanti. Satu fakta pendek per ingatan. Jangan simpan password, nomor kartu, atau data rahasia; jangan simpan obrolan sepele atau hal sementara; jangan duplikat yang sudah ada. Kalau dia minta melupakan sesuatu, hapus dengan {{act:{"op":"del","t":"mem","ref":0}}} (ref dari [mem N]). Hanya tulis tag kalau memang layak diingat, lalu balas singkat.`;
 // ---------- aksi data: catat / ubah / hapus ----------
-const LAB={task:"Tugas",tx:"Transaksi",saving:"Tabungan",sched:"Jadwal",todo:"To do"},VB={add:"ditambah",edit:"diubah",del:"dihapus"};
+const LAB={task:"Tugas",tx:"Transaksi",saving:"Tabungan",sched:"Jadwal",todo:"To do",mem:"Ingatan",note:"Catatan",kelas:"Kelas"},VB={add:1,edit:1,del:1},UNDO_NOTE=[];
 const clean=s=>String(s==null?"":s).replace(/[{}|\n]/g," ").trim();
+const cj=x=>JSON.stringify(x,(k,v)=>v&&typeof v==="object"&&!Array.isArray(v)?Object.keys(v).sort().reduce((a,b)=>(a[b]=v[b],a),{}):v),cp=x=>JSON.parse(JSON.stringify(x));
+const undoNote=()=>UNDO_NOTE.length?"\n\nZaim baru saja membatalkan lewat tombol Urungkan: "+UNDO_NOTE.splice(0).join("; ")+". Anggap aksi itu tidak pernah terjadi.":"";
 function parseActs(t){const a=[],re=/\{\{act:(\{.*?\})\}\}/g;let m;while((m=re.exec(t))){try{a.push(JSON.parse(m[1]))}catch(e){a.push({op:"bad"})}}return a}
-function chips(el,t){const m=/\{\{res:([^\n]*?)\}\}/.exec(t);if(!m)return;const w=document.createElement("div");w.className="acts";
-  m[1].split(" | ").forEach(s=>{const c=document.createElement("div");c.className="ac"+(s[0]==="✗"?" bad":"");c.textContent=s;w.appendChild(c)});el.appendChild(w)}
+function chips(el,t,rs){const m=/\{\{res:([^\n]*?)\}\}/.exec(t);if(!m)return;const w=document.createElement("div");w.className="acts";
+  m[1].split(" | ").forEach((s,i)=>{const c=document.createElement("div");c.className="ac"+(s[0]==="✗"?" bad":"");const sp=document.createElement("span");sp.textContent=s;c.appendChild(sp);
+    const u=rs&&rs[i]&&rs[i].ok&&rs[i].undo;
+    if(u){const b=document.createElement("button");b.className="ub";b.textContent="Urungkan";
+      b.onclick=async()=>{b.disabled=true;b.textContent="…";
+        try{await u();sp.textContent="↩ Dibatalkan: "+s.slice(2);c.classList.add("undone");b.remove();UNDO_NOTE.push(clean(s.slice(2)));DT=0;dataCtx(true).catch(()=>{})}
+        catch(e){b.disabled=false;b.textContent="Urungkan";sp.textContent=s+" (gagal membatalkan: "+clean(e.message||e.status||"error")+")"}};
+      c.appendChild(b)}
+    w.appendChild(c)});el.appendChild(w)}
 const newId=L=>L.some(x=>typeof x.id==="string")?uuid():Date.now()+Math.floor(Math.random()*1000);
-async function mgrEdit(fn){const uid=SES.user.id,r=await rows("manager_state?select=data&user_id=eq."+uid),d=(r[0]||{}).data||{},msg=fn(d);
+async function mgrEdit(fn){const uid=SES.user.id,r=await rows("manager_state?select=data&user_id=eq."+uid),d=(r[0]||{}).data||{},res=fn(d);
   if(r[0])await sbx("manager_state?user_id=eq."+uid,"PATCH",{data:d},"return=minimal");
   else await sbx("manager_state","POST",[{user_id:uid,data:d}],"return=minimal");
-  return msg}
+  return res}
+// pembatal: cari item yang cocok persis (kunci diurutkan karena jsonb mengubah urutan), lalu kembalikan
+function mkUndo(gl,kind,before,after,at){return()=>mgrEdit(d=>{const L=gl(d);
+  if(kind==="del")L.splice(Math.min(at,L.length),0,before);
+  else{const i=L.findIndex(x=>cj(x)===cj(after));if(i<0)throw new Error("data sudah berubah");if(kind==="add")L.splice(i,1);else L[i]=before}
+  return 1})}
 function pick(a){const o={};
   if(a.t==="task"){if(a.title!=null)o.title=String(a.title);if(a.deadline!=null)o.deadline=a.deadline;if(a.done!=null)o.done=!!a.done}
   if(a.t==="tx"){if(a.type!=null)o.type=a.type==="in"?"in":"out";if(a.amt!=null)o.amt=Number(a.amt);if(a.cat!=null)o.cat=String(a.cat);if(a.note!=null)o.note=String(a.note);if(a.date!=null)o.date=a.date}
@@ -346,44 +554,68 @@ function pick(a){const o={};
   if(a.t==="sched"){if(a.text!=null)o.text=String(a.text);if(a.time!=null)o.time=a.time;if(a.date!=null)o.date=a.date}
   return o}
 const nm=o=>clean(o.title||o.name||o.note||o.text||o.cat||"");
-function listAct(d,a){const k={task:"tasks",tx:"tx",saving:"savings"}[a.t],L=d[k]=d[k]||[],o=pick(a);
+function listAct(d,a){const k={task:"tasks",tx:"tx",saving:"savings"}[a.t],L=d[k]=d[k]||[],o=pick(a),gl=x=>(x[k]=x[k]||[]);
   if(a.op==="add"){
     if(a.t==="task"){if(!o.title)throw new Error("judul tugas kosong");o.done=!!o.done;o.deadline=o.deadline||""}
     if(a.t==="tx"){if(!(o.amt>0))throw new Error("nominal tidak valid");o.type=o.type||"out";o.date=o.date||iso();o.cat=o.cat||"Lainnya"}
     if(a.t==="saving"){if(!o.name)throw new Error("nama tabungan kosong");o.saved=o.saved||0;o.target=o.target||0}
-    o.id=newId(L);L.push(o);return LAB[a.t]+" ditambah: "+nm(o)+(a.t==="tx"?" ("+R(o.amt)+")":"")}
+    o.id=newId(L);L.push(o);return{m:LAB[a.t]+" ditambah: "+nm(o)+(a.t==="tx"?" ("+R(o.amt)+")":""),undo:mkUndo(gl,"add",null,cp(o))}}
   const i=Number(a.ref);if(!Number.isInteger(i)||!L[i])throw new Error(LAB[a.t]+" #"+a.ref+" tidak ketemu");
-  const old=nm(L[i]);
-  if(a.op==="del"){L.splice(i,1);return LAB[a.t]+" dihapus: "+old}
+  const old=nm(L[i]),bf=cp(L[i]);
+  if(a.op==="del"){L.splice(i,1);return{m:LAB[a.t]+" dihapus: "+old,undo:mkUndo(gl,"del",bf,null,i)}}
   if(!Object.keys(o).length)throw new Error("tidak ada yang diubah");
-  Object.assign(L[i],o);return LAB[a.t]+" diubah: "+old}
+  Object.assign(L[i],o);return{m:LAB[a.t]+" diubah: "+old,undo:mkUndo(gl,"edit",bf,cp(L[i]))}}
 function schedAct(d,a){const S=d.sched=d.sched||[];for(let i=0;i<7;i++)S[i]=S[i]||[];const o=pick(a);
   if(a.op==="add"){if(!o.text)throw new Error("isi jadwal kosong");
     const di=a.day!=null?Number(a.day):a.date?(new Date(a.date+"T00:00").getDay()+6)%7:(new Date().getDay()+6)%7;
-    if(!(di>=0&&di<=6))throw new Error("hari tidak valid");o.time=o.time||"";o.id=newId(S[di]);S[di].push(o);return "Jadwal ditambah: "+DN[di]+" "+nm(o)+(o.time?" jam "+o.time:"")}
+    if(!(di>=0&&di<=6))throw new Error("hari tidak valid");o.time=o.time||"";o.id=newId(S[di]);S[di].push(o);
+    return{m:"Jadwal ditambah: "+DN[di]+" "+nm(o)+(o.time?" jam "+o.time:""),undo:mkUndo(x=>{x.sched=x.sched||[];return x.sched[di]=x.sched[di]||[]},"add",null,cp(o))}}
   const [dd,ii]=String(a.ref).split(".").map(Number),it=(S[dd]||[])[ii];if(!it)throw new Error("Jadwal #"+a.ref+" tidak ketemu");
-  const old=nm(it);
-  if(a.op==="del"){S[dd].splice(ii,1);return "Jadwal dihapus: "+old}
+  const old=nm(it),bf=cp(it),gl=x=>{x.sched=x.sched||[];return x.sched[dd]=x.sched[dd]||[]};
+  if(a.op==="del"){S[dd].splice(ii,1);return{m:"Jadwal dihapus: "+old,undo:mkUndo(gl,"del",bf,null,ii)}}
   if(!Object.keys(o).length)throw new Error("tidak ada yang diubah");
-  Object.assign(it,o);return "Jadwal diubah: "+old}
-async function todoAct(a){const T="secretary_todos";
-  if(a.op==="add"){const o={text:String(a.text||"").trim(),done:false};if(!o.text)throw new Error("isi to do kosong");
-    const vs=[o,{...o,user_id:SES.user.id},{...o,id:uuid(),user_id:SES.user.id}];let er;
-    for(const b of vs){try{await sbx(T,"POST",[b],"return=minimal");return "To do ditambah: "+clean(o.text)}catch(e){er=e}}
-    throw er}
-  if(a.ref==null)throw new Error("to do tidak ketemu");
-  const f=T+"?id=eq."+encodeURIComponent(a.ref);
-  if(a.op==="del"){const r=await sbx(f,"DELETE",undefined,"return=representation");if(!r||!r.length)throw new Error("to do tidak ketemu");return "To do dihapus: "+clean(r[0].text)}
-  const o={};if(a.text!=null)o.text=String(a.text);if(a.done!=null)o.done=!!a.done;if(!Object.keys(o).length)throw new Error("tidak ada yang diubah");
-  const r=await sbx(f,"PATCH",o,"return=representation");if(!r||!r.length)throw new Error("to do tidak ketemu");return "To do diubah: "+clean(r[0].text)}
-async function doAct(a){if(!SES)throw new Error("masuk akun dulu");
-  if(!VB[a.op]||!LAB[a.t])throw new Error("perintah tidak dikenali");
-  if(a.t==="todo")return await todoAct(a);
+  Object.assign(it,o);return{m:"Jadwal diubah: "+old,undo:mkUndo(gl,"edit",bf,cp(it))}}
+// tabel biasa (bukan JSON manager): to do, dst.
+const TBL={todo:{T:"secretary_todos",lab:"To do"},note:{T:"secretary_notes",lab:"Catatan"},kelas:{T:"class_sessions",lab:"Kelas"}};
+let NK="id",BKS=null;const pad2=n=>String(n).padStart(2,"0");
+const tUrl=(T,k,ref)=>T+"?"+k+"=eq."+encodeURIComponent(ref);
+async function tIns(T,vs){let er;for(const b of vs){try{const r=await sbx(T,"POST",[b],"return=representation");return(r&&r[0])||b}catch(e){er=e}}throw er}
+async function tGet(T,k,ref){const r=await sbx(tUrl(T,k,ref)+"&select=*&limit=1");if(!r||!r.length)throw new Error("tidak ketemu");return r[0]}
+async function tPatch(T,k,ref,o){const r=await sbx(tUrl(T,k,ref),"PATCH",o,"return=representation");if(!r||!r.length)throw new Error("tidak ketemu");return r[0]}
+async function tDel(T,k,ref){const r=await sbx(tUrl(T,k,ref),"DELETE",undefined,"return=representation");if(!r||!r.length)throw new Error("tidak ketemu");return r[0]}
+// nama kolom isi catatan tidak diketahui: deteksi dari satu baris, kalau tabel kosong coba kandidat umum
+async function bodyKeys(){if(BKS)return BKS;const C=["body","content","text","html","note","notes","desc"];
+  try{const r=await sbx("secretary_notes?select=*&limit=1");if(r&&r[0]){const f=C.filter(c=>c in r[0]);if(f.length)return BKS=f}}catch(e){}
+  return C}
+async function tblAct(a){const D=TBL[a.t],T=D.T,k=a.t==="note"?NK:"id",uid=SES.user.id,o={};
+  if(a.t==="todo"){if(a.text!=null)o.text=String(a.text).trim();if(a.done!=null)o.done=!!a.done}
+  if(a.t==="note"){if(a.title!=null)o.title=String(a.title).trim()}
+  if(a.t==="kelas"){if(a.title!=null)o.title=String(a.title).trim();if(a.status!=null)o.status=String(a.status)}
+  if(a.op==="add"){let vs=[];
+    if(a.t==="todo"){if(!o.text)throw new Error("isi to do kosong");o.done=!!o.done;vs=[o,{...o,user_id:uid},{...o,id:uuid(),user_id:uid}]}
+    else if(a.t==="note"){if(!o.title)throw new Error("judul catatan kosong");const b0={title:o.title,ts:Date.now()},bs=a.body?await bodyKeys():[null];
+      for(const bk of bs){const b=bk?{...b0,[bk]:String(a.body)}:b0;vs.push(b,{...b,user_id:uid},{...b,id:uuid(),user_id:uid})}}
+    else{if(!o.title)throw new Error("judul kelas kosong");if(!a.date||!a.time)throw new Error("tanggal dan jam kelas wajib");
+      const t=new Date(a.date+"T"+a.time);if(isNaN(t))throw new Error("tanggal/jam tidak valid");
+      const b={title:o.title,scheduled_at:t.toISOString(),status:"scheduled",user_id:uid};vs=[{...b,duration_min:Number(a.duration_min)||60},b]}
+    const row=await tIns(T,vs),kv=row[k];
+    return{m:D.lab+" ditambah: "+nm(row),undo:kv!==undefined?()=>tDel(T,k,kv):null}}
+  const ref=a.ref;if(ref==null||ref==="")throw new Error(D.lab+" tidak ketemu");
+  const old=await tGet(T,k,ref);
+  if(a.op==="del"){const r=await tDel(T,k,ref);return{m:D.lab+" dihapus: "+nm(r),undo:()=>tIns(T,[r])}}
+  if(a.t==="note"&&a.body!=null){const bk=(await bodyKeys()).find(c=>c in old);if(!bk)throw new Error("kolom isi catatan tidak ditemukan");o[bk]=String(a.body)}
+  if(a.t==="kelas"&&(a.date||a.time)){const c=new Date(old.scheduled_at),t=new Date((a.date||c.getFullYear()+"-"+pad2(c.getMonth()+1)+"-"+pad2(c.getDate()))+"T"+(a.time||pad2(c.getHours())+":"+pad2(c.getMinutes())));
+    if(isNaN(t))throw new Error("tanggal/jam tidak valid");o.scheduled_at=t.toISOString()}
+  if(!Object.keys(o).length)throw new Error("tidak ada yang diubah");
+  const was={};Object.keys(o).forEach(x=>was[x]=old[x]);
+  await tPatch(T,k,ref,o);return{m:D.lab+" diubah: "+nm(old),undo:()=>tPatch(T,k,ref,was)}}
+async function doAct(a){if(!VB[a.op]||!LAB[a.t])throw new Error("perintah tidak dikenali");if(a.t==="mem")return await memAct(a);if(!SES)throw new Error("masuk akun dulu");
+  if(TBL[a.t])return await tblAct(a);
   return await mgrEdit(d=>a.t==="sched"?schedAct(d,a):listAct(d,a))}
 async function runActs(acts){const res=[],ord=x=>x.op==="edit"?0:x.op==="add"?1:2,ix=x=>Number(String(x.ref).split(".").pop())||0;
   // hapus dari indeks terbesar dulu supaya indeks lain tidak bergeser
   const q=acts.slice().sort((a,b)=>ord(a)-ord(b)||(a.op==="del"&&b.op==="del"?ix(b)-ix(a):0));
-  for(const a of q){try{res.push({ok:1,m:clean(await doAct(a))})}catch(e){res.push({ok:0,m:clean((LAB[a.t]||"Aksi")+" gagal: "+(e.message||e.status||"error"))})}}
+  for(const a of q){try{const r=await doAct(a);res.push({ok:1,m:clean(r.m),undo:r.undo})}catch(e){res.push({ok:0,m:clean((LAB[a.t]||"Aksi")+" gagal: "+(e.message||e.status||"error"))})}}
   if(res.some(r=>r.ok)){DT=0;dataCtx(true).catch(()=>{})}
   return res}
 const ACTSYS=`
@@ -399,9 +631,11 @@ Jenis data (t) dan isinya:
 - sched: add (day 0-6 dengan Senin=0, text, time "HH:MM" opsional, date opsional) | edit (ref, text/time/date) | del (ref)
 - saving: add (name, target, saved) | edit (ref, name/target/saved) | del (ref)
 - todo: add (text) | edit (ref, text/done) | del (ref)
-"ref" WAJIB disalin persis dari tanda [...] di konteks: [task 3] jadi "ref":3, [jadwal 2.0] jadi "ref":"2.0", [todo abc] jadi "ref":"abc". Jangan mengarang ref. Kalau item yang dimaksud tidak ada di konteks, bilang tidak ketemu.
+- note: add (title, body = isi catatan) | edit (ref, title/body) | del (ref)
+- kelas: add (title, date, time "HH:MM", duration_min opsional) | edit (ref, title/date/time/status) | del (ref)
+"ref" WAJIB disalin persis dari tanda [...] di konteks: [task 3] jadi "ref":3, [jadwal 2.0] jadi "ref":"2.0", [todo abc] jadi "ref":"abc", [note 12] jadi "ref":12, [kelas abc] jadi "ref":"abc". Jangan mengarang ref. Kalau item yang dimaksud tidak ada di konteks, bilang tidak ketemu.
 
-ATURAN MODE CATAT (penting):
+ATURAN MODE CATAT (penting, berlaku apa pun karakter yang aktif):
 - Kalau Zaim minta mencatat/mengubah/menghapus dan infonya sudah cukup, LANGSUNG tulis tag aksinya, lalu balas SATU kalimat pendek (mis. "Beres, udah kucatat."). Jangan ceramah, jangan komentar di luar permintaan, jangan basa-basi.
 - Kalau ada info penting yang kurang atau ambigu (nominal tidak ada, item mana yang dimaksud, ada beberapa kandidat), JANGAN tulis tag; tanya SATU pertanyaan singkat saja.
 - Boleh pakai default wajar tanpa bertanya: tanggal kosong = hari ini; type tx dari kalimatnya (beli/bayar = out, gaji/dapat uang = in); cat tebak yang paling pas, utamakan kategori yang sudah ada di konteks.
@@ -409,33 +643,49 @@ ATURAN MODE CATAT (penting):
 - Boleh banyak aksi sekaligus (satu tag per baris).
 - Nominal: "50rb"=50000, "1,5jt"=1500000. Tanggal format YYYY-MM-DD.
 - Hasil asli (✓/✗) ditampilkan aplikasi di bawah balasanmu. Jangan bilang sudah tercatat tanpa menulis tag. Tag di riwayat obrolan sudah dijalankan, jangan ditulis ulang kecuali Zaim minta lagi. Kalau riwayat menunjukkan ✗, jelaskan singkat dan tawarkan coba lagi.
-- Catatan (notes) dan jadwal kelas belum bisa diubah lewat kamu.`;
-const NOLOGIN="\n\nZaim belum masuk akun, jadi kamu tidak bisa mencatat, mengubah, atau menghapus data apa pun. Kalau dia memintanya, bilang singkat suruh Masuk dulu lewat menu riwayat (tombol Masuk).";
+- FOTO STRUK: kalau Zaim mengirim foto struk atau nota, baca nama toko, tanggal, dan total. Catat SATU transaksi keluar per struk (amt = total akhir yang dibayar, note = nama toko, cat tebak yang pas), kecuali dia minta per item. Setelah tag, sebut singkat apa yang kamu baca (toko dan total). Kalau fotonya buram, totalnya tidak terbaca, atau bukan struk, JANGAN tulis tag; tanya atau bilang apa yang kurang.
+- Isi catatan (body) ditulis rapi dalam SATU baris JSON; baris baru ditulis sebagai \\n. Kelas wajib punya tanggal dan jam; kalau salah satunya tidak ada, tanya.`;
+const NOLOGIN="\n\nZaim belum masuk akun, jadi kamu tidak bisa mencatat, mengubah, atau menghapus data tugas, keuangan, dan sejenisnya (menyimpan ingatan jangka panjang tetap bisa). Kalau dia memintanya, bilang singkat suruh Masuk dulu lewat menu riwayat (tombol Masuk).";
 async function send(){
   if(busy){AC&&AC.abort();return}
-  const v=ta.value.trim();if(!v)return;if(!KEY){openKey();return}
-  ta.value="";busy=true;fit();
-  hist.push({role:"user",content:v});const u=add("user",v),el=add("a","");
+  stopRec();const raw=ta.value.trim(),im=PIMG;if(!raw&&!im)return;if(!KEY){openKey();return}
+  const v=raw||"Tolong catat struk ini.";ta.value="";clearImg();busy=true;markEdit();fit();
+  const ent={role:"user",content:(im?"📷 ":"")+v};if(im)IMGS.set(ent,im);hist.push(ent);const u=add("user",ent.content,false,im),el=add("a","");
   let part="";
   const stx=t=>{if(!part)el.innerHTML='<span class="dots"><i></i><i></i><i></i></span><small class="st">'+esc(t)+'</small>'};
   stx("");AC=new AbortController();await Promise.race([dataCtx(true),slp(3500)]);
-  const sys=SYS+"\n\nSekarang: "+new Date().toLocaleString("id-ID",{dateStyle:"full",timeStyle:"short"})+(SES?"\nTanggal hari ini (ISO): "+iso():"")+(SES?ACTSYS:NOLOGIN)+
+  const sys=sysBase()+"\n\nSekarang: "+new Date().toLocaleString("id-ID",{dateStyle:"full",timeStyle:"short"})+(SES?"\nTanggal hari ini (ISO): "+iso():"")+(SES?ACTSYS:NOLOGIN)+MEMSYS+memCtx()+undoNote()+
     (DCTX?"\n\nKonteks hidup Zaim (dari app Manager, Secretary, Classroom miliknya). Untuk obrolan biasa, sebut hanya kalau nyambung. Jangan mengarang angka; pakai hanya yang ada di konteks.\n"+DCTX+"\n\nWIDGET: aplikasi bisa menampilkan grafik/kartu dari data asli kalau kamu menulis tag di baris sendiri: {{viz:keuangan}} {{viz:tugas}} {{viz:jadwal}} {{viz:tabungan}} {{viz:todo}} {{viz:kelas}} {{viz:catatan}}. Kalau Zaim bertanya soal keuangan (pemasukan, pengeluaran, saldo, boros, kategori, tren): tulis {{viz:keuangan}} lalu penjelasan LENGKAP (angka bulan ini, perbandingan bulan lalu, kategori terbesar, pola atau tren, saran singkat); untuk ini boleh panjang dan boleh pakai poin. Kalau bertanya soal data lain: tulis tag yang cocok lalu 1-3 kalimat komentar. Untuk obrolan biasa jangan pakai tag.":"");
   try{
-    const out=await gen(hist.slice(-16),{sys,temp:.6,sig:AC.signal,onStatus:stx,onText:t=>{part=t;el.innerHTML=md(t);bottom()}});
+    const out=await gen(ctxMsgs(),{sys,temp:PERS[PERSONA].full?1:.6,full:!!PERS[PERSONA].full,sig:AC.signal,onStatus:stx,onText:t=>{part=t;el.innerHTML=md(t);bottom()}});
     if(!out.trim()){el.className="m a err";el.textContent="Aku nggak bisa jawab yang itu. Coba bilang dengan cara lain.";hist.pop()}
-    else{let full=out;const acts=parseActs(out);
+    else{let full=out,rs=null;const acts=parseActs(out);
       if(acts.length){el.innerHTML=md(out,true)+'<small class="st">Mencatat…</small>';bottom();
-        const rs=await runActs(acts);full=out+"\n{{res:"+rs.map(r=>(r.ok?"✓ ":"✗ ")+r.m).join(" | ")+"}}"}
-      el.innerHTML=md(full,true);hydrate(el);chips(el,full);hist.push({role:"assistant",content:full});save();persist(v,full)}
+        rs=await runActs(acts);full=out+"\n{{res:"+rs.map(r=>(r.ok?"✓ ":"✗ ")+r.m).join(" | ")+"}}"}
+      el.innerHTML=md(full,true);hydrate(el);chips(el,full,rs);hist.push({role:"assistant",content:full});save();persist(ent.content,full)}
   }catch(e){
-    if(e.userStop&&part.trim()){part=part.replace(/\{\{act:[^\n]*\n?/g,"");hist.push({role:"assistant",content:part});save();persist(v,part)}
-    else{u.remove();el.remove();hist.pop();ta.value=v;
+    if(e.userStop&&part.trim()){part=part.replace(/\{\{act:[^\n]*\n?/g,"");hist.push({role:"assistant",content:part});save();persist(ent.content,part)}
+    else{u.remove();el.remove();hist.pop();ta.value=raw;if(im){PIMG=im;showImg()}
       if(!e.userStop){const er=add("a","");er.className="m a err";er.textContent=errMsg(e);if(e.status===401||e.status===403)openKey()}}}
-  AC=null;busy=false;fit();ta.focus();bottom()}
+  AC=null;busy=false;IMGS.delete(ent);markEdit();fit();if(matchMedia("(hover:hover)").matches)ta.focus();bottom()}
 // ---------- riwayat obrolan (database) ----------
 const EMPTY='<div id="empty"><b>Hai, Zaim.</b>Cerita apa aja, aku dengerin.</div>';
-function paint(){log.innerHTML="";if(!hist.length)log.innerHTML=EMPTY;else hist.forEach(m=>add(m.role,m.content,true));bottom()}
+function paint(){log.innerHTML="";if(!hist.length)log.innerHTML=EMPTY;else hist.forEach(m=>add(m.role,m.content,true));markEdit();bottom()}
+// ---------- ubah pesan terakhir ----------
+function markEdit(){log.querySelectorAll(".eb").forEach(x=>x.remove());if(busy)return;
+  const us=log.querySelectorAll(".m.u");if(!us.length||!hist.some(m=>m.role==="user"))return;
+  const b=document.createElement("button");b.className="eb";b.textContent="Ubah";b.onclick=editLast;us[us.length-1].after(b)}
+async function dropDb(n){if(!SES||!CID)return;
+  try{const r=await rows("confidant_messages?select=id&chat_id=eq."+CID+"&order=id.desc&limit="+n);if(r.length)await sbx("confidant_messages?id=in.("+r.map(x=>x.id).join(",")+")","DELETE",undefined,"return=minimal")}catch(e){}}
+async function editLast(){if(busy)return;
+  let i=hist.length-1;while(i>=0&&hist[i].role!=="user")i--;if(i<0)return;
+  const acted=hist.slice(i+1).some(m=>/\{\{res:[^\n]*✓/.test(m.content));
+  if(acted&&!confirm("Pesan ini sudah mencatat atau mengubah data. Kalau dikirim ulang, bisa tercatat dobel (pakai tombol Urungkan dulu kalau perlu). Lanjut ubah?"))return;
+  let t=hist[i].content;const img=t.startsWith("📷 ");if(img)t=t.slice(3);
+  const n=hist.length-i,last=PEND[PEND.length-1];
+  hist.splice(i);save();
+  if(!FP&&last&&last.cid===CID&&n===2){PEND.pop();pSave()}else dropDb(n);
+  paint();ta.value=t;fit();if(img)flash("Lampirkan fotonya lagi");ta.focus()}
 let CHATS=[],CID=null,FP=null;try{CID=localStorage.getItem("zcf-cid")||null}catch(e){}
 const setCid=v=>{CID=v;try{v?localStorage.setItem("zcf-cid",v):localStorage.removeItem("zcf-cid")}catch(e){}};
 const uuid=()=>crypto.randomUUID?crypto.randomUUID():"xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g,c=>{const r=Math.random()*16|0;return(c==="x"?r:r&3|8).toString(16)});
@@ -456,17 +706,23 @@ function flushPend(){if(FP||!SES||!PEND.length)return;
   FP=(async()=>{let ok=true;while(PEND.length){try{await push(PEND[0]);PEND.shift();pSave()}catch(e){ok=false;HST="Riwayat belum tersimpan"+(e&&e.status?" ("+e.status+")":"");dsr();setTimeout(flushPend,15000);break}}
     if(ok){HST="";dsr()}})().finally(()=>{FP=null})}
 const fdt=s=>{const d=new Date(s);return isNaN(d)?"":d.toDateString()===new Date().toDateString()?d.toLocaleTimeString("id-ID",{hour:"2-digit",minute:"2-digit"}):d.toLocaleDateString("id-ID",{day:"numeric",month:"short"})};
-function paintDrawer(){const l=$("dl");l.innerHTML="";
+function paintDrawer(){const l=$("dl");l.innerHTML="";$("av").textContent=SES?String(SES.user.email||"?")[0].toUpperCase():"?";
   if(!SES){l.innerHTML='<div class="dn">Masuk untuk menyimpan riwayat obrolan ke akunmu.</div>';return}
   if(!CHATS.length){l.innerHTML='<div class="dn">Belum ada obrolan.</div>';return}
   CHATS.forEach(c=>{const r=document.createElement("div");r.className="ci"+(c.id===CID?" on":"");
-    r.innerHTML="<div class='ct'><b></b><small></small></div><button class='ib' aria-label='Ubah nama'>✎</button><button class='ib' aria-label='Hapus'>✕</button>";
-    r.querySelector("b").textContent=c.title;r.querySelector("small").textContent=fdt(c.updated_at);
+    r.innerHTML=`<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/></svg><div class='ct'><b></b></div><span class='ra'><button class='ib' aria-label='Ubah nama'>✎</button><button class='ib' aria-label='Hapus'>✕</button></span>`;
+    r.querySelector("b").textContent=c.title;
     const bs=r.querySelectorAll("button");r.onclick=()=>openChat(c.id);bs[0].onclick=e=>{e.stopPropagation();renChat(c)};bs[1].onclick=e=>{e.stopPropagation();delChat(c)};l.appendChild(r)})}
 const openDrawer=()=>{paintDrawer();$("drw").classList.add("show");$("dov").classList.add("show")},closeDrawer=()=>{$("drw").classList.remove("show");$("dov").classList.remove("show")};
 $("menu").onclick=openDrawer;$("dov").onclick=closeDrawer;
-function newChat(){setCid(null);hist=[];save();paint();paintDrawer()}
-async function loadMsgs(id){const r=await rows("confidant_messages?select=role,content&chat_id=eq."+id+"&order=id.asc&limit=300");if(CID!==id)return;hist=r.filter(m=>m.content);save();paint()}
+function paintPers(){const w=$("pers");w.innerHTML="";
+  Object.keys(PERS).forEach(k=>{const b=document.createElement("button");b.type="button";b.className="chip"+(k===PERSONA?" on":"");b.textContent=PERS[k].n;
+    b.onclick=()=>{if(k===PERSONA)return;PERSONA=k;PSW=hist.length;try{localStorage.setItem("zcf-persona",k)}catch(e){}paintPers()};w.appendChild(b)});
+  $("pdesc").textContent=PERS[PERSONA].d}
+const closeSet=()=>$("set").classList.remove("show"),openSet=()=>{closeDrawer();paintPers();paintMem();$("sacc").textContent=SES?SES.user.email:"Belum masuk akun";$("set").classList.add("show")};
+$("setb").onclick=openSet;$("av").onclick=openSet;$("sclose").onclick=closeSet;$("set").onclick=e=>{if(e.target===$("set"))closeSet()};
+function newChat(){PSW=0;setCid(null);hist=[];save();paint();paintDrawer()}
+async function loadMsgs(id){const r=await rows("confidant_messages?select=role,content&chat_id=eq."+id+"&order=id.asc&limit=300");if(CID!==id)return;hist=r.filter(m=>m.content);PSW=0;save();paint()}
 async function openChat(id){if(busy){return}closeDrawer();if(id===CID&&hist.length)return;setCid(id);hist=[];log.innerHTML='<div class="m a err">Memuat…</div>';paintDrawer();
   try{await loadMsgs(id)}catch(e){log.innerHTML='<div class="m a err">Gagal memuat obrolan.</div>'}}
 async function renChat(c){const t=(prompt("Ubah nama obrolan",c.title)||"").trim().slice(0,60);if(!t||t===c.title)return;const o=c.title;c.title=t;paintDrawer();
@@ -481,13 +737,23 @@ async function loadRemote(){if(!SES)return;
   if(CID&&CHATS.some(c=>c.id===CID)){if(!PEND.some(x=>x.cid===CID))try{await loadMsgs(CID)}catch(e){}}
   else if(CID){setCid(null);hist=[];save();paint()}
   dataCtx()}
+// ---------- input suara ----------
+const SRC=window.SpeechRecognition||window.webkitSpeechRecognition;let REC=null;
+if(SRC)$("mic").style.display="";
+const stopRec=()=>{if(REC){try{REC.stop()}catch(e){}}};
+$("mic").onclick=()=>{if(REC){stopRec();return}if(busy)return;
+  const r=new SRC(),base=ta.value?ta.value.trimEnd()+" ":"";r.lang="id-ID";r.interimResults=true;r.continuous=false;
+  r.onresult=e=>{let t="";for(const x of e.results)t+=x[0].transcript;ta.value=base+t;fit()};
+  r.onerror=e=>{flash(e.error==="not-allowed"||e.error==="service-not-allowed"?"Izin mikrofon ditolak":e.error==="no-speech"?"Tidak terdengar suara":"Suara gagal: "+e.error)};
+  r.onend=()=>{REC=null;$("mic").classList.remove("rec");fit()};
+  try{r.start();REC=r;$("mic").classList.add("rec")}catch(e){flash("Mikrofon tidak bisa dipakai")}};
 sb.onclick=send;
 ta.addEventListener("input",fit);
 ta.addEventListener("keydown",e=>{if(e.key==="Enter"&&!e.shiftKey&&!e.isComposing&&matchMedia("(hover:hover)").matches){e.preventDefault();if(!busy)send()}});
-$("new").onclick=()=>{if(!hist.length||busy)return;newChat()};
+$("new").onclick=()=>{closeSet();closeDrawer();if(!hist.length||busy)return;newChat()};
 // ---------- API key ----------
 function openKey(){$("kin").value="";$("kerr").textContent="";$("kdel").style.display=KEY?"":"none";$("kclose").style.display=KEY?"":"none";$("modal").classList.add("show");setTimeout(()=>$("kin").focus(),200)}
-$("gear").onclick=openKey;$("kclose").onclick=()=>$("modal").classList.remove("show");
+$("gear").onclick=()=>{closeSet();openKey()};$("kclose").onclick=()=>$("modal").classList.remove("show");
 $("kdel").onclick=()=>{KEY="";MODEL="";try{localStorage.removeItem("zcf-key");localStorage.removeItem("zcf-model")}catch(e){}openKey()};
 $("ksave").onclick=async()=>{const k=$("kin").value.trim();if(!k){$("kerr").textContent="Masukkan API key dulu.";return}
   const b=$("ksave");b.disabled=true;$("kerr").textContent="Memeriksa…";const old=KEY;KEY=k;MODEL="";
@@ -519,13 +785,13 @@ async function doAuth(up){const em=$("aem").value.trim(),pw=$("apw").value,er=$(
 $("ain").onclick=()=>doAuth(false);$("aup").onclick=()=>doAuth(true);
 $("apw").addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();doAuth(false)}});
 $("aguest").onclick=()=>{try{localStorage.setItem("zcf-guest","1")}catch(e){}location.reload()};
-$("acc").onclick=()=>{if(!SES){$("aerr").textContent="";$("auth").classList.add("show");return}
+$("acc").onclick=()=>{closeSet();if(!SES){$("aerr").textContent="";$("auth").classList.add("show");return}
   if(!confirm("Keluar dari akun "+SES.user.email+"?"))return;
   try{fetch(SBU+"/auth/v1/logout",{method:"POST",headers:{apikey:SBK,Authorization:"Bearer "+SES.access_token}}).catch(()=>{})}catch(e){}
   SES=null;try{localStorage.removeItem("zcf-ses")}catch(e){}location.reload()};
 // ---------- mulai ----------
 if(!SES&&!GUEST)$("auth").classList.add("show");
-else{if(hist.length)hist.forEach(m=>add(m.role,m.content,true));fit();if(!KEY)openKey();loadRemote()}
+else{if(hist.length)hist.forEach(m=>add(m.role,m.content,true));markEdit();fit();if(!KEY)openKey();loadRemote();memLoad()}
 </script>
 </body>
 </html>
