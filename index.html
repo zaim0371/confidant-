@@ -72,6 +72,7 @@ textarea::placeholder{color:var(--tx2)}
     <h1>Zaim’s Confidant</h1>
     <div class="hb"><button class="ib" id="new">Baru</button><button class="ib" id="gear">Key</button><button class="ib" id="acc">Masuk</button></div>
   </header>
+  <div id="ds" style="display:none;font-size:12px;color:var(--tx2);padding:0 0 6px;cursor:pointer" title="Muat ulang"></div>
   <div id="log"><div id="empty"><b>Hai, Zaim.</b>Cerita apa aja, aku dengerin.</div></div>
   <div class="bar">
     <textarea id="in" rows="1" placeholder="Ngobrol sama aku…" enterkeyhint="send"></textarea>
@@ -126,14 +127,25 @@ async function tok(){if(!SES||SES.expires_at*1000>Date.now()+60000)return;
 async function sbx(path,m,b,pref){await tok();if(!SES)throw new Error("belum login");
   const h={apikey:SBK,Authorization:"Bearer "+SES.access_token,"Content-Type":"application/json"};if(pref)h.Prefer=pref;
   const r=await fetch(SBU+"/rest/v1/"+path,{method:m||"GET",headers:h,body:b!==undefined?JSON.stringify(b):undefined});
-  if(!r.ok)throw new Error("db "+r.status);const t=await r.text();return t?JSON.parse(t):null}
+  if(!r.ok){let m="";try{m=(await r.json()).message||""}catch(e){}const er=new Error(m||"db "+r.status);er.status=r.status;throw er}const t=await r.text();return t?JSON.parse(t):null}
 let DCTX="",DT=0;
-async function dataCtx(){if(!SES||Date.now()-DT<3e5)return;DT=Date.now();
-  try{const c=await sbx("rpc/confidant_context","POST",{})||{},L=[];
-    (c.tasks||[]).forEach(t=>L.push("Tugas: "+t.title+(t.deadline?" (deadline "+t.deadline+")":"")));
-    (c.todos||[]).forEach(t=>L.push("To do: "+t));
-    (c.classes||[]).forEach(t=>L.push("Kelas: "+t.title+" "+new Date(t.scheduled_at).toLocaleString("id-ID",{weekday:"short",day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"})));
-    DCTX=L.join("\n").slice(0,1200)}catch(e){DCTX=""}}
+const rows=async p=>(await sbx(p))||[];
+async function dataCtx(force){if(!SES||(!force&&DT&&Date.now()-DT<3e5))return;DT=Date.now();
+  const uid=SES.user.id,td=new Date(),iso=td.getFullYear()+"-"+String(td.getMonth()+1).padStart(2,"0")+"-"+String(td.getDate()).padStart(2,"0"),di=(td.getDay()+6)%7;
+  const R=await Promise.allSettled([rows("manager_state?select=data&user_id=eq."+uid),rows("secretary_todos?select=text&done=eq.false&order=ts.desc&limit=10"),
+    rows("secretary_notes?select=title&order=ts.desc&limit=8"),rows("class_sessions?select=title,scheduled_at&status=eq.scheduled&scheduled_at=gt."+encodeURIComponent(td.toISOString())+"&order=scheduled_at.asc&limit=4&user_id=eq."+uid)]);
+  const N=["Manager","To do","Catatan","Kelas"],L=[],S=[],v=i=>R[i].status==="fulfilled"?R[i].value:[];
+  R.forEach((r,i)=>S.push(N[i]+(r.status==="fulfilled"?" ✓":" ✗ "+(r.reason&&(r.reason.status||r.reason.message)||""))));
+  const d=(v(0)[0]||{}).data||{},num=x=>Number(x)||0;
+  (d.tasks||[]).filter(t=>!t.done).slice(0,8).forEach(t=>L.push("Tugas: "+t.title+(t.deadline?" (deadline "+t.deadline+")":"")));
+  ((d.sched||[])[di]||[]).filter(x=>!x.date||x.date===iso).slice(0,8).forEach(x=>L.push("Hari ini: "+x.text+(x.time?" jam "+x.time:"")));
+  if((d.tx||[]).length){const sm=k=>d.tx.filter(x=>x.type===k).reduce((a,x)=>a+num(x.amt),0);L.push("Saldo utama: Rp"+(sm("in")-sm("out")).toLocaleString("id-ID"))}
+  (d.savings||[]).slice(0,5).forEach(g=>L.push("Tabungan "+g.name+": Rp"+num(g.saved).toLocaleString("id-ID")+(num(g.target)?" dari Rp"+num(g.target).toLocaleString("id-ID"):"")));
+  v(1).forEach(t=>L.push("To do: "+t.text));v(2).forEach(t=>t.title&&L.push("Catatan: "+t.title));
+  v(3).forEach(t=>L.push("Kelas: "+t.title+" "+new Date(t.scheduled_at).toLocaleString("id-ID",{weekday:"short",day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"})));
+  DCTX=L.join("\n").slice(0,1800);
+  if(R.some(r=>r.status!=="fulfilled"))DT=0;
+  const el=$("ds");if(el){el.textContent="Data: "+S.join(" · ");el.style.display=""}}
 
 // ---------- sistem AI (dari Zaim’s Classroom) ----------
 let KEY="",MODEL="",CANDS=[];
@@ -238,7 +250,7 @@ async function send(){
   hist.push({role:"user",content:v});const u=add("user",v),el=add("a","");
   let part="";
   const stx=t=>{if(!part)el.innerHTML='<span class="dots"><i></i><i></i><i></i></span><small class="st">'+esc(t)+'</small>'};
-  stx("");AC=new AbortController();dataCtx();
+  stx("");AC=new AbortController();await Promise.race([dataCtx(),slp(2500)]);
   const sys=SYS+"\n\nSekarang: "+new Date().toLocaleString("id-ID",{dateStyle:"full",timeStyle:"short"})+
     (DCTX?"\n\nKonteks hidup Zaim (dari app Manager, Secretary, Classroom miliknya; hanya untuk kamu tahu). Sebut hanya kalau nyambung dengan obrolan. Kamu cuma teman ngobrol: tidak bisa menambah, mengubah, atau menghapus data apa pun.\n"+DCTX:"");
   try{
@@ -272,6 +284,7 @@ $("ksave").onclick=async()=>{const k=$("kin").value.trim();if(!k){$("kerr").text
   catch(e){KEY=old;$("kerr").textContent=errMsg(e)}
   b.disabled=false};
 $("kin").addEventListener("keydown",e=>{if(e.key==="Enter")$("ksave").click()});
+$("ds").onclick=()=>dataCtx(true);
 // ---------- login ----------
 const GUEST=(()=>{try{return localStorage.getItem("zcf-guest")==="1"}catch(e){return false}})();
 $("acc").textContent=SES?"Keluar":"Masuk";
