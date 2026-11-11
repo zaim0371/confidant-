@@ -56,13 +56,21 @@ textarea::placeholder{color:var(--tx2)}
 .btn{font:500 14px inherit;font-family:inherit;border:1px solid var(--ln);background:none;color:var(--tx);padding:9px 18px;border-radius:99px;cursor:pointer}
 .btn.p{background:var(--ub);color:var(--ut);border-color:var(--ub)}
 .btn:disabled{opacity:.4}
+.st{margin-left:6px;color:var(--tx2);font-size:12.5px}
+#auth{position:fixed;inset:0;background:var(--bg);display:none;align-items:center;justify-content:center;padding:20px;z-index:20}
+#auth.show{display:flex}
+#auth .card{border:0;background:none;padding:0;max-width:340px}
+#auth h2{font-size:22px;font-weight:500;letter-spacing:-.02em;margin:0 0 4px}
+#auth input{margin-bottom:10px}
+#auth .btn{width:100%;margin-top:6px;padding:12px}
+#auth .ln{background:none;border:0;color:var(--tx2);font:13.5px inherit;font-family:inherit;margin-top:14px;cursor:pointer;width:100%;text-decoration:underline}
 </style>
 </head>
 <body>
 <div class="app">
   <header>
     <h1>Zaim’s Confidant</h1>
-    <div class="hb"><button class="ib" id="new">Baru</button><button class="ib" id="gear">Key</button></div>
+    <div class="hb"><button class="ib" id="new">Baru</button><button class="ib" id="gear">Key</button><button class="ib" id="acc">Masuk</button></div>
   </header>
   <div id="log"><div id="empty"><b>Hai, Zaim.</b>Cerita apa aja, aku dengerin.</div></div>
   <div class="bar">
@@ -71,6 +79,10 @@ textarea::placeholder{color:var(--tx2)}
   </div>
 </div>
 
+<div id="auth"><div class="card"><h2>Zaim’s Confidant</h2><p>Masuk supaya obrolan tersimpan di akunmu.</p>
+<input id="aem" type="email" placeholder="Email" autocomplete="email"><input id="apw" type="password" placeholder="Password" autocomplete="current-password">
+<div id="aerr" style="min-height:20px;font-size:13px;color:var(--tx2);margin:2px 0"></div>
+<button class="btn p" id="ain">Masuk</button><button class="btn" id="aup">Daftar</button><button class="ln" id="aguest">Lanjut tanpa masuk</button></div></div>
 <div id="modal"><div class="card">
   <h2>API key Gemini</h2>
   <p>Dipakai biar aku bisa jawab. Disimpan di browser kamu saja. Ambil gratis di aistudio.google.com/apikey</p>
@@ -95,9 +107,38 @@ Cara bicara:
 - Jangan pakai header, tabel, atau format laporan. Hindari bullet kecuali memang perlu. Jangan buka dengan basa-basi seperti "Tentu!" atau "Pertanyaan bagus!".
 - Kalau dia terdengar sangat terpuruk atau berpikir menyakiti diri sendiri, tetap tenang dan peduli, tanya kabarnya dengan lembut, dan dorong dia menghubungi orang terdekat atau bantuan profesional.`;
 
+// ---------- akun (Supabase Auth) ----------
+const SBU="https://ypdtaoccfxzquyfsiloy.supabase.co",SBK="sb_publishable_2crOjnp8Rf4zhCt2bdO_Ug_rH4enKGH";
+let SES=null;try{SES=JSON.parse(localStorage.getItem("zcf-ses")||"null")}catch(e){}
+const HK=()=>"zcf-hist"+(SES?"-"+SES.user.id:"");
+async function authCall(path,body){
+  const r=await fetch(SBU+"/auth/v1/"+path,{method:"POST",headers:{apikey:SBK,"Content-Type":"application/json"},body:JSON.stringify(body)});
+  let d={};try{d=await r.json()}catch(e){}
+  if(!r.ok){const e=new Error(d.error_description||d.msg||d.message||"auth "+r.status);e.status=r.status;e.code=d.error_code||"";throw e}return d}
+function setSes(d){if(!d||!d.access_token)return false;
+  SES={access_token:d.access_token,refresh_token:d.refresh_token,expires_at:d.expires_at||Math.floor(Date.now()/1000)+(d.expires_in||3600),user:{id:d.user.id,email:d.user.email}};
+  try{localStorage.setItem("zcf-ses",JSON.stringify(SES))}catch(e){}return true}
+let _rf=null;
+async function tok(){if(!SES||SES.expires_at*1000>Date.now()+60000)return;
+  if(!_rf)_rf=authCall("token?grant_type=refresh_token",{refresh_token:SES.refresh_token}).then(setSes).catch(e=>{if(e.status===400||e.status===401){SES=null;try{localStorage.removeItem("zcf-ses")}catch(x){}}}).finally(()=>{_rf=null});
+  await _rf}
+// database hanya disentuh kalau sudah login
+async function sbx(path,m,b,pref){await tok();if(!SES)throw new Error("belum login");
+  const h={apikey:SBK,Authorization:"Bearer "+SES.access_token,"Content-Type":"application/json"};if(pref)h.Prefer=pref;
+  const r=await fetch(SBU+"/rest/v1/"+path,{method:m||"GET",headers:h,body:b!==undefined?JSON.stringify(b):undefined});
+  if(!r.ok)throw new Error("db "+r.status);const t=await r.text();return t?JSON.parse(t):null}
+let DCTX="",DT=0;
+async function dataCtx(){if(!SES||Date.now()-DT<3e5)return;DT=Date.now();
+  try{const c=await sbx("rpc/confidant_context","POST",{})||{},L=[];
+    (c.tasks||[]).forEach(t=>L.push("Tugas: "+t.title+(t.deadline?" (deadline "+t.deadline+")":"")));
+    (c.todos||[]).forEach(t=>L.push("To do: "+t));
+    (c.classes||[]).forEach(t=>L.push("Kelas: "+t.title+" "+new Date(t.scheduled_at).toLocaleString("id-ID",{weekday:"short",day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"})));
+    DCTX=L.join("\n").slice(0,1200)}catch(e){DCTX=""}}
+
 // ---------- sistem AI (dari Zaim’s Classroom) ----------
 let KEY="",MODEL="",CANDS=[];
-try{KEY=localStorage.getItem("zcf-key")||"";MODEL=localStorage.getItem("zcf-model")||""}catch(e){}
+try{KEY=localStorage.getItem("zcf-key")||"";MODEL=localStorage.getItem("zcf-model")||"";CANDS=JSON.parse(localStorage.getItem("zcf-cands")||"[]")}catch(e){}
+const COOL={},TKM={},slp=ms=>new Promise(z=>setTimeout(z,ms));
 async function detectModel(){
   const FB="gemini-flash-latest";let j;
   try{
@@ -111,37 +152,59 @@ async function detectModel(){
   const tier=n=>/pro|thinking/.test(n)?0:/flash-lite/.test(n)?2:/flash/.test(n)?3:1;
   const stable=n=>/(preview|exp)/.test(n)?0:1;
   all.sort((a,b)=>(stable(b)-stable(a))||(tier(b)-tier(a))||(ver(b)-ver(a))||a.length-b.length);
-  CANDS=all.slice(0,5);MODEL=all[0];try{localStorage.setItem("zcf-model",MODEL)}catch(e){}
+  CANDS=all.slice(0,6);const l=all.find(n=>/lite/.test(n));if(l&&!CANDS.includes(l))CANDS.push(l);
+  MODEL=all[0];try{localStorage.setItem("zcf-model",MODEL);localStorage.setItem("zcf-cands",JSON.stringify(CANDS))}catch(e){}
   return MODEL;
 }
-async function gen(msgs,onText,att=0,tc){
-  if(!MODEL)await detectModel();
-  const body={systemInstruction:{parts:[{text:SYS+"\n\nSekarang: "+new Date().toLocaleString("id-ID",{dateStyle:"full",timeStyle:"short"})}]},
-    contents:msgs.map(m=>({role:m.role==="assistant"?"model":"user",parts:[{text:m.content}]})),
-    generationConfig:{temperature:1,maxOutputTokens:2048}};
-  if(tc===undefined)tc=/pro/.test(MODEL)?null:{thinkingBudget:0};
-  if(tc)body.generationConfig.thinkingConfig=tc;
-  let r;
-  try{r=await fetch(API+"models/"+encodeURIComponent(MODEL)+":streamGenerateContent?alt=sse",{method:"POST",headers:{"Content-Type":"application/json","x-goog-api-key":KEY},body:JSON.stringify(body)})}
-  catch(e){e.net=true;throw e}
-  if(!r.ok){
-    if([429,500,503,504].includes(r.status)&&att<3){
-      const L=[...new Set([MODEL,...CANDS,"gemini-flash-latest","gemini-flash-lite-latest"])];
-      MODEL=L[(L.indexOf(MODEL)+1)%L.length];await new Promise(z=>setTimeout(z,400*(att+1)));return gen(msgs,onText,att+1,tc)}
-    if(r.status===400&&tc)return gen(msgs,onText,att,null);
-    if(r.status===404&&att<2){try{localStorage.removeItem("zcf-model")}catch(e){}MODEL="gemini-flash-latest";return gen(msgs,onText,att+1,tc)}
-    let d="";try{d=((await r.json()).error||{}).message||""}catch(_){}
-    const e=new Error("http");e.status=r.status;e.detail=d.slice(0,140);throw e}
-  const pk=j=>((j.candidates&&j.candidates[0]&&j.candidates[0].content&&j.candidates[0].content.parts)||[]).map(p=>p.text||"").join("");
-  const rd=r.body.getReader(),dc=new TextDecoder();let buf="",all="";
-  for(;;){const x=await rd.read();if(x.done)break;buf+=dc.decode(x.value,{stream:true});const ls=buf.split("\n");buf=ls.pop();
-    for(const l of ls){if(l.startsWith("data:")){try{all+=pk(JSON.parse(l.slice(5)));onText(all)}catch(e){}}}}
-  return all;
+function thkOpts(m){if(/latest/.test(m))return[{thinkingBudget:0},{thinkingLevel:"minimal"},{thinkingLevel:"low"}];if(/gemini-2\.5/.test(m))return/pro/.test(m)?[{thinkingBudget:128}]:[{thinkingBudget:0}];if(/gemini-([3-9])/.test(m))return[{thinkingLevel:"minimal"},{thinkingLevel:"low"}];return[]}
+const pool=()=>[...new Set([MODEL,...CANDS,"gemini-flash-latest","gemini-flash-lite-latest"].filter(Boolean))];
+// satu permintaan ke satu model; error yang bisa dicoba ulang diberi e.retry
+async function once(m,msgs,o,st){
+  let tl=TKM[m]||0;
+  for(;;){
+    const body={systemInstruction:{parts:[{text:o.sys}]},contents:msgs.map(x=>({role:x.role==="assistant"?"model":"user",parts:[{text:x.content}]})),generationConfig:{temperature:1,maxOutputTokens:1024}};
+    const tk=thkOpts(m)[tl];if(tk)body.generationConfig.thinkingConfig=tk;
+    const ac=new AbortController();let to=false;const tmo=setTimeout(()=>{to=true;ac.abort()},20000);
+    if(o.sig)o.sig.addEventListener("abort",()=>ac.abort(),{once:true});
+    let r;st("Mengirim…");
+    try{r=await fetch(API+"models/"+encodeURIComponent(m)+":streamGenerateContent?alt=sse",{method:"POST",signal:ac.signal,headers:{"Content-Type":"application/json","x-goog-api-key":KEY},body:JSON.stringify(body)});clearTimeout(tmo)}
+    catch(err){clearTimeout(tmo);
+      if(o.sig&&o.sig.aborted){err.userStop=true;throw err}
+      if(to){COOL[m]=Date.now()+60000;err.retry=true;throw err}
+      err.net=true;err.retry=(o.nr=(o.nr||0)+1)<2;await slp(700);throw err}
+    if(!r.ok){
+      let d="",j=null;try{j=await r.json();d=(j.error||{}).message||""}catch(_){}
+      if(r.status===400&&tk){tl++;TKM[m]=tl;continue}
+      const e=new Error("http");e.status=r.status;e.detail=d.slice(0,140);
+      if(r.status===429){const w=/retry in ([\d.]+)s/i.exec(d),day=/PerDay|per day/i.test(JSON.stringify(j||{}));
+        e.wait=day?36e5:Math.max(5000,w?parseFloat(w[1])*1000:20000);COOL[m]=Date.now()+e.wait;e.retry=true;throw e}
+      if([500,503,504].includes(r.status)){COOL[m]=Date.now()+15000;e.retry=true;throw e}
+      if(r.status===404){COOL[m]=Date.now()+36e5;e.retry=true;throw e}
+      throw e}
+    TKM[m]=tl;st("Menulis…");
+    const pk=j=>((j.candidates&&j.candidates[0]&&j.candidates[0].content&&j.candidates[0].content.parts)||[]).map(p=>p.text||"").join("");
+    const rd=r.body.getReader(),dc=new TextDecoder();let buf="",all="";
+    for(;;){const x=await rd.read();if(x.done)break;buf+=dc.decode(x.value,{stream:true});const ls=buf.split("\n");buf=ls.pop();
+      for(const l of ls){if(l.startsWith("data:")){try{all+=pk(JSON.parse(l.slice(5)));o.onText&&o.onText(all)}catch(e){}}}}
+    return all}
 }
+// model yang kena limit dilewati dulu (cooldown), jadi balasan berikutnya tidak menunggu model yang penuh
+async function gen(msgs,o={}){
+  if(!MODEL)await detectModel();
+  const st=o.onStatus||(()=>{});let last;
+  for(let a=0;a<7;a++){
+    if(o.sig&&o.sig.aborted){const e=new Error("stop");e.userStop=true;throw e}
+    const L=pool(),n=Date.now();let m=L.find(x=>!(COOL[x]>n));
+    if(!m){const w=Math.min(...L.map(x=>COOL[x]||0))-n;
+      if(w>12000)throw last||Object.assign(new Error("http"),{status:429,wait:w});
+      st("Menunggu kuota "+Math.ceil(w/1000)+" dtk…");await slp(w+300);m=L.find(x=>!(COOL[x]>Date.now()))||L[0]}
+    try{return await once(m,msgs,o,st)}catch(e){if(e.userStop||!e.retry)throw e;last=e;if(a>0)st("Ganti model…")}
+  }
+  throw last}
 function errMsg(e){const s=e&&e.status,d=e&&e.detail?" ("+e.detail+")":"";
   if(s===401||s===403||(s===400&&/api key/i.test(e.detail||"")))return"API key tidak valid atau belum aktif. Cek lewat tombol Key.";
   if(s===404)return"Model Gemini tidak tersedia untuk key ini."+d;
-  if(s===429)return"Kuota atau kecepatan terlampaui. Coba lagi sebentar.";
+  if(s===429){const w=(e.wait||0);return w>6e5?"Kuota harian key ini habis. Coba besok atau ganti key lewat tombol Key.":"Kuota sedang penuh. Coba lagi ±"+Math.max(5,Math.ceil(w/1000))+" detik."}
   if([500,503,504].includes(s))return"Server Google AI sedang sibuk. Coba kirim ulang sebentar lagi.";
   if(s)return"Google AI error "+s+"."+d;
   if(e&&(e.net||e.name==="TypeError"))return"Tidak bisa terhubung ke Google AI. Cek internet/VPN, atau buka file ini langsung di browser.";
@@ -159,33 +222,46 @@ function md(t){const cb=[];
     return"<p>"+inl(ls.join("<br>"))+"</p>"}).join("")
     .replace(/\u0000(\d+)\u0000/g,(_,i)=>"</p><pre><code>"+cb[i]+"</code></pre><p>").replace(/<p><\/p>/g,"")}
 const log=$("log"),ta=$("in"),sb=$("send");
-let hist=[],busy=false;
-try{hist=JSON.parse(localStorage.getItem("zcf-hist")||"[]").filter(m=>m&&m.content)}catch(e){}
-const save=()=>{try{hist=hist.slice(-60);localStorage.setItem("zcf-hist",JSON.stringify(hist))}catch(e){}};
+let hist=[],busy=false,AC=null;
+try{hist=JSON.parse(localStorage.getItem(HK())||"[]").filter(m=>m&&m.content)}catch(e){}
+const save=()=>{try{hist=hist.slice(-60);localStorage.setItem(HK(),JSON.stringify(hist))}catch(e){}};
 const bottom=()=>{log.scrollTop=log.scrollHeight};
 function add(role,text){const e=$("empty");if(e)e.remove();
   const d=document.createElement("div");d.className="m "+(role==="user"?"u":"a");
   if(role==="user")d.textContent=text;else if(text)d.innerHTML=md(text);
   log.appendChild(d);bottom();return d}
-function fit(){ta.style.height="auto";ta.style.height=Math.min(ta.scrollHeight,140)+"px";sb.disabled=busy||!ta.value.trim()}
+function fit(){ta.style.height="auto";ta.style.height=Math.min(ta.scrollHeight,140)+"px";sb.disabled=!busy&&!ta.value.trim();sb.style.opacity=busy?".9":""}
 async function send(){
-  const v=ta.value.trim();if(!v||busy)return;if(!KEY){openKey();return}
+  if(busy){AC&&AC.abort();return}
+  const v=ta.value.trim();if(!v)return;if(!KEY){openKey();return}
   ta.value="";busy=true;fit();
   hist.push({role:"user",content:v});const u=add("user",v),el=add("a","");
-  el.innerHTML='<span class="dots"><i></i><i></i><i></i></span>';
+  let part="";
+  const stx=t=>{if(!part)el.innerHTML='<span class="dots"><i></i><i></i><i></i></span><small class="st">'+esc(t)+'</small>'};
+  stx("");AC=new AbortController();dataCtx();
+  const sys=SYS+"\n\nSekarang: "+new Date().toLocaleString("id-ID",{dateStyle:"full",timeStyle:"short"})+
+    (DCTX?"\n\nKonteks hidup Zaim (dari app Manager, Secretary, Classroom miliknya; hanya untuk kamu tahu). Sebut hanya kalau nyambung dengan obrolan. Kamu cuma teman ngobrol: tidak bisa menambah, mengubah, atau menghapus data apa pun.\n"+DCTX:"");
   try{
-    const out=await gen(hist.slice(-24),t=>{el.innerHTML=md(t);bottom()});
+    const out=await gen(hist.slice(-16),{sys,sig:AC.signal,onStatus:stx,onText:t=>{part=t;el.innerHTML=md(t);bottom()}});
     if(!out.trim()){el.className="m a err";el.textContent="Aku nggak bisa jawab yang itu. Coba bilang dengan cara lain.";hist.pop()}
-    else{hist.push({role:"assistant",content:out});save()}
-  }catch(e){u.remove();el.remove();hist.pop();ta.value=v;
-    const er=add("a","");er.className="m a err";er.textContent=errMsg(e);
-    if(e.status===401||e.status===403)openKey();}
-  busy=false;fit();ta.focus();bottom()}
+    else{hist.push({role:"assistant",content:out});save();remoteSave(v,out)}
+  }catch(e){
+    if(e.userStop&&part.trim()){hist.push({role:"assistant",content:part});save();remoteSave(v,part)}
+    else{u.remove();el.remove();hist.pop();ta.value=v;
+      if(!e.userStop){const er=add("a","");er.className="m a err";er.textContent=errMsg(e);if(e.status===401||e.status===403)openKey()}}}
+  AC=null;busy=false;fit();ta.focus();bottom()}
+// riwayat disimpan ke akun hanya kalau sudah login
+function remoteSave(a,b){if(!SES)return;sbx("confidant_messages","POST",[{role:"user",content:a},{role:"assistant",content:b}],"return=minimal").catch(()=>{})}
+const EMPTY='<div id="empty"><b>Hai, Zaim.</b>Cerita apa aja, aku dengerin.</div>';
+function paint(){log.innerHTML="";if(!hist.length)log.innerHTML=EMPTY;else hist.forEach(m=>add(m.role,m.content))}
+async function loadRemote(){if(!SES)return;
+  try{const r=await sbx("confidant_messages?select=role,content&order=id.desc&limit=60")||[];
+    hist=r.reverse().filter(m=>m&&m.content);save();paint()}catch(e){}dataCtx()}
 sb.onclick=send;
 ta.addEventListener("input",fit);
-ta.addEventListener("keydown",e=>{if(e.key==="Enter"&&!e.shiftKey&&!e.isComposing&&matchMedia("(hover:hover)").matches){e.preventDefault();send()}});
+ta.addEventListener("keydown",e=>{if(e.key==="Enter"&&!e.shiftKey&&!e.isComposing&&matchMedia("(hover:hover)").matches){e.preventDefault();if(!busy)send()}});
 $("new").onclick=()=>{if(!hist.length||busy)return;if(!confirm("Mulai obrolan baru? Riwayat sekarang akan dihapus."))return;
-  hist=[];save();log.innerHTML='<div id="empty"><b>Hai, Zaim.</b>Cerita apa aja, aku dengerin.</div>'};
+  hist=[];save();paint();if(SES)sbx("confidant_messages?user_id=eq."+SES.user.id,"DELETE",undefined,"return=minimal").catch(()=>{})};
 // ---------- API key ----------
 function openKey(){$("kin").value="";$("kerr").textContent="";$("kdel").style.display=KEY?"":"none";$("kclose").style.display=KEY?"":"none";$("modal").classList.add("show");setTimeout(()=>$("kin").focus(),200)}
 $("gear").onclick=openKey;$("kclose").onclick=()=>$("modal").classList.remove("show");
@@ -196,9 +272,36 @@ $("ksave").onclick=async()=>{const k=$("kin").value.trim();if(!k){$("kerr").text
   catch(e){KEY=old;$("kerr").textContent=errMsg(e)}
   b.disabled=false};
 $("kin").addEventListener("keydown",e=>{if(e.key==="Enter")$("ksave").click()});
+// ---------- login ----------
+const GUEST=(()=>{try{return localStorage.getItem("zcf-guest")==="1"}catch(e){return false}})();
+$("acc").textContent=SES?"Keluar":"Masuk";
+function authErr(e){const m=(e.message||"")+" "+(e.code||"");
+  if(/invalid login|invalid_credentials/i.test(m))return"Email atau password salah.";
+  if(/already|exists/i.test(m))return"Email sudah terdaftar. Coba Masuk.";
+  if(/not confirmed|email_not_confirmed/i.test(m))return"Email belum dikonfirmasi. Cek kotak masukmu.";
+  if(/password/i.test(m))return"Password minimal 6 karakter.";
+  if(/valid email|invalid.*email/i.test(m))return"Format email tidak valid.";
+  if(/rate|too many|over_.*limit/i.test(m))return"Terlalu banyak percobaan. Tunggu sebentar.";
+  if(e.name==="TypeError")return"Tidak bisa terhubung. Cek internetmu.";
+  return"Gagal: "+(e.message||"coba lagi")}
+async function doAuth(up){const em=$("aem").value.trim(),pw=$("apw").value,er=$("aerr");
+  if(!em||pw.length<6){er.textContent="Isi email dan password (min. 6 karakter).";return}
+  const bs=[$("ain"),$("aup")];bs.forEach(b=>b.disabled=true);er.textContent="Memproses…";
+  try{const d=await authCall(up?"signup":"token?grant_type=password",{email:em,password:pw});
+    if(setSes(d)){try{localStorage.removeItem("zcf-guest")}catch(e){}location.reload();return}
+    er.textContent="Akun dibuat. Cek emailmu untuk konfirmasi, lalu tekan Masuk."}
+  catch(e){er.textContent=authErr(e)}
+  bs.forEach(b=>b.disabled=false)}
+$("ain").onclick=()=>doAuth(false);$("aup").onclick=()=>doAuth(true);
+$("apw").addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();doAuth(false)}});
+$("aguest").onclick=()=>{try{localStorage.setItem("zcf-guest","1")}catch(e){}location.reload()};
+$("acc").onclick=()=>{if(!SES){$("aerr").textContent="";$("auth").classList.add("show");return}
+  if(!confirm("Keluar dari akun "+SES.user.email+"?"))return;
+  try{fetch(SBU+"/auth/v1/logout",{method:"POST",headers:{apikey:SBK,Authorization:"Bearer "+SES.access_token}}).catch(()=>{})}catch(e){}
+  SES=null;try{localStorage.removeItem("zcf-ses")}catch(e){}location.reload()};
 // ---------- mulai ----------
-if(hist.length){hist.forEach(m=>add(m.role,m.content))}
-fit();if(!KEY)openKey();
+if(!SES&&!GUEST)$("auth").classList.add("show");
+else{if(hist.length)hist.forEach(m=>add(m.role,m.content));fit();if(!KEY)openKey();loadRemote()}
 </script>
 </body>
 </html>
