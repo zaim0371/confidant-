@@ -26,6 +26,7 @@ h1{font-size:14px;font-weight:600;letter-spacing:.02em;margin:0}
 #empty b{display:block;color:var(--tx);font-size:22px;font-weight:500;letter-spacing:-.02em;margin-bottom:4px}
 .m{max-width:100%;overflow-wrap:anywhere;animation:up .4s both}
 .m.u{align-self:flex-end;max-width:84%;background:var(--ub);color:var(--ut);padding:10px 16px;border-radius:20px 20px 6px 20px;white-space:pre-wrap}
+.m.u.ph{background:none;padding:0}
 .m.a p,.m.a ul,.m.a ol,.m.a pre{margin:0 0 .8em}
 .m.a>:last-child{margin-bottom:0}
 .m.a ul,.m.a ol{padding-left:1.3em}
@@ -405,7 +406,7 @@ const pool=()=>[...new Set([MODEL,...CANDS,"gemini-flash-latest","gemini-flash-l
 async function once(m,msgs,o,st){
   let tl=TKM[m]||0;
   for(;;){
-    const body={systemInstruction:{parts:[{text:o.sys}]},contents:msgs.map(x=>({role:x.role==="assistant"?"model":"user",parts:[{text:x.content}].concat(x.img?[{inlineData:{mimeType:"image/jpeg",data:x.img.split(",")[1]}}]:[])})),generationConfig:{temperature:o.temp||1,maxOutputTokens:2048}};
+    const body={systemInstruction:{parts:[{text:o.sys}]},contents:msgs.map(x=>({role:x.role==="assistant"?"model":"user",parts:((t=>t?[{text:t}]:(x.img?[]:[{text:"[foto]"}]))(x.content.replace(/^📷\s*/,""))).concat(x.img?[{inlineData:{mimeType:"image/jpeg",data:x.img.split(",")[1]}}]:[])})),generationConfig:{temperature:o.temp||1,maxOutputTokens:2048}};
     const tk=thkOpts(m)[tl];if(tk)body.generationConfig.thinkingConfig=tk;if(o.full)body.safetySettings=[{category:"HARM_CATEGORY_HARASSMENT",threshold:"BLOCK_NONE"}];
     const ac=new AbortController();let to=false;const tmo=setTimeout(()=>{to=true;ac.abort()},20000);
     if(o.sig)o.sig.addEventListener("abort",()=>ac.abort(),{once:true});
@@ -500,7 +501,7 @@ const save=()=>{try{hist=hist.slice(-60);localStorage.setItem(HK(),JSON.stringif
 const bottom=()=>{log.scrollTop=log.scrollHeight};
 function add(role,text,full,img){const e=$("empty");if(e)e.remove();
   const d=document.createElement("div");d.className="m "+(role==="user"?"u":"a");
-  if(role==="user"){if(img){const i=document.createElement("img");i.src=img;i.style.cssText="display:block;max-width:100%;max-height:220px;border-radius:12px;margin-bottom:6px";d.appendChild(i)}d.appendChild(document.createTextNode(text))}else if(text){d.innerHTML=md(text,full);if(full){hydrate(d);chips(d,text)}}
+  if(role==="user"){const had=/^📷/.test(text);let t=text.replace(/^📷\s*/,"");if(had&&!img&&!t)t="(foto)";if(img){const i=document.createElement("img");i.src=img;i.style.cssText="display:block;max-width:100%;max-height:220px;border-radius:12px"+(t?";margin-bottom:6px":"");d.appendChild(i);if(!t)d.classList.add("ph")}if(t)d.appendChild(document.createTextNode(t))}else if(text){d.innerHTML=md(text,full);if(full){hydrate(d);chips(d,text)}}
   log.appendChild(d);bottom();return d}
 let PIMG=null;const IMGS=new WeakMap();
 function flash(t){const o=ta.placeholder;ta.placeholder=t;setTimeout(()=>{ta.placeholder=o},2500)}
@@ -665,17 +666,18 @@ ATURAN MODE CATAT (penting, berlaku apa pun karakter yang aktif):
 - Boleh banyak aksi sekaligus (satu tag per baris).
 - Nominal: "50rb"=50000, "1,5jt"=1500000. Tanggal format YYYY-MM-DD.
 - Hasil asli (✓/✗) ditampilkan aplikasi di bawah balasanmu. Jangan bilang sudah tercatat tanpa menulis tag. Tag di riwayat obrolan sudah dijalankan, jangan ditulis ulang kecuali Zaim minta lagi. Kalau riwayat menunjukkan ✗, jelaskan singkat dan tawarkan coba lagi.
+- FOTO TANPA TEKS: kalau Zaim kirim foto saja tanpa tulisan, tanpa perlu ditanya: kalau itu struk/nota, catat sesuai aturan FOTO STRUK; kalau bukan, tanggapi isi fotonya seperti teman.
 - FOTO STRUK: kalau Zaim mengirim foto struk atau nota, baca nama toko, tanggal, dan total. Catat SATU transaksi keluar per struk (amt = total akhir yang dibayar, note = nama toko, cat tebak yang pas), kecuali dia minta per item. Setelah tag, sebut singkat apa yang kamu baca (toko dan total). Kalau fotonya buram, totalnya tidak terbaca, atau bukan struk, JANGAN tulis tag; tanya atau bilang apa yang kurang.
 - Isi catatan (body) ditulis rapi dalam SATU baris JSON; baris baru ditulis sebagai \\n. Kelas wajib punya tanggal dan jam; kalau salah satunya tidak ada, tanya.`;
 const NOLOGIN="\n\nZaim belum masuk akun, jadi kamu tidak bisa mencatat, mengubah, atau menghapus data tugas, keuangan, dan sejenisnya (menyimpan ingatan jangka panjang tetap bisa). Kalau dia memintanya, bilang singkat suruh Masuk dulu lewat menu riwayat (tombol Masuk).";
 async function send(){
   if(busy){AC&&AC.abort();return}
   stopRec();const raw=ta.value.trim(),im=PIMG;if(!raw&&!im)return;if(!KEY){openKey();return}
-  const v=raw||"Tolong catat struk ini.";ta.value="";clearImg();busy=true;markEdit();fit();
-  const ent={role:"user",content:(im?"📷 ":"")+v};if(im)IMGS.set(ent,im);hist.push(ent);const u=add("user",ent.content,false,im),el=add("a","");
+  const v=raw;ta.value="";clearImg();busy=true;markEdit();fit();
+  const ent={role:"user",content:im?("📷 "+v).trim():v};if(im)IMGS.set(ent,im);hist.push(ent);const u=add("user",ent.content,false,im),el=add("a","");
   let part="";
   const stx=t=>{if(!part)el.innerHTML='<span class="dots"><i></i><i></i><i></i></span><small class="st">'+esc(t)+'</small>'};
-  stx("");AC=new AbortController();await Promise.race([dataCtx(true),slp(3500)]);
+  stx("");AC=new AbortController();if(DATA)dataCtx().catch(()=>{});else await Promise.race([dataCtx(),slp(2500)]);
   const sys=sysBase()+"\n\nSekarang: "+new Date().toLocaleString("id-ID",{dateStyle:"full",timeStyle:"short"})+(SES?"\nTanggal hari ini (ISO): "+iso():"")+(SES?ACTSYS:NOLOGIN)+MEMSYS+memCtx()+undoNote()+
     (DCTX?"\n\nKonteks hidup Zaim (dari app Manager, Secretary, Classroom miliknya). Selain itu ada data tambahan (Wishlist, materi/fitur belajar Classroom, dan tabel lain) berawalan \"Tabel ...\" atau \"Data Manager (...)\": itu juga bisa kamu baca, tapi hanya dibaca, belum bisa kamu ubah. Kamu BISA membaca seluruh isi data ini, termasuk ISI catatan (setelah tanda \"ISI:\"), isi to do, kelas, tugas, jadwal, dan keuangan. Kalau Zaim bertanya isi catatan atau data apa pun, baca dari konteks dan jawab langsung; jangan bilang kamu tidak bisa membaca. Untuk obrolan biasa, sebut hanya kalau nyambung. Jangan mengarang angka; pakai hanya yang ada di konteks.\n"+DCTX+"\n\nWIDGET: aplikasi bisa menampilkan grafik/kartu dari data asli kalau kamu menulis tag di baris sendiri: {{viz:keuangan}} {{viz:tugas}} {{viz:jadwal}} {{viz:tabungan}} {{viz:todo}} {{viz:kelas}} {{viz:catatan}}. Kalau Zaim bertanya soal keuangan (pemasukan, pengeluaran, saldo, boros, kategori, tren): tulis {{viz:keuangan}} lalu penjelasan LENGKAP (angka bulan ini, perbandingan bulan lalu, kategori terbesar, pola atau tren, saran singkat); untuk ini boleh panjang dan boleh pakai poin. Kalau bertanya soal data lain: tulis tag yang cocok lalu 1-3 kalimat komentar. Untuk obrolan biasa jangan pakai tag.":"");
   try{
@@ -684,12 +686,23 @@ async function send(){
     else{let full=out,rs=null;const acts=parseActs(out);
       if(acts.length){el.innerHTML=md(out,true)+'<small class="st">Mencatat…</small>';bottom();
         rs=await runActs(acts);full=out+"\n{{res:"+rs.map(r=>(r.ok?"✓ ":"✗ ")+r.m).join(" | ")+"}}"}
-      el.innerHTML=md(full,true);hydrate(el);chips(el,full,rs);hist.push({role:"assistant",content:full});save();persist(ent.content,full)}
+      el.innerHTML=md(full,true);hydrate(el);chips(el,full,rs);hist.push({role:"assistant",content:full});save();persist(ent.content,full);if(SES&&hist.length===2)autoTitle(CID,ent.content,full)}
   }catch(e){
     if(e.userStop&&part.trim()){part=part.replace(/\{\{act:[^\n]*\n?/g,"");hist.push({role:"assistant",content:part});save();persist(ent.content,part)}
     else{u.remove();el.remove();hist.pop();ta.value=raw;if(im){PIMG=im;showImg()}
       if(!e.userStop){const er=add("a","");er.className="m a err";er.textContent=errMsg(e);if(e.status===401||e.status===403)openKey()}}}
   AC=null;busy=false;IMGS.delete(ent);markEdit();fit();if(matchMedia("(hover:hover)").matches)ta.focus();bottom()}
+// ---------- judul obrolan otomatis ----------
+async function autoTitle(cid,a,b){
+  const c=CHATS.find(x=>x.id===cid);if(!c||!c.t0||c.title!==c.t0)return;
+  try{const ua=a.replace(/^📷\s*/,"").trim()||"(mengirim foto)",ab=String(b).replace(/\{\{[^\n]*/g,"").trim().slice(0,300);
+    const o=await gen([{role:"user",content:"Obrolan:\nZaim: "+ua.slice(0,300)+"\nAI: "+ab+"\n\nBuat judul obrolan ini: 2 sampai 5 kata, Bahasa Indonesia, tanpa tanda kutip, tanpa titik, tanpa emoji. Balas judulnya saja."}],{sys:"Kamu pembuat judul obrolan yang singkat dan jelas.",temp:.3});
+    const t=o.split("\n")[0].replace(/[*"“”`#]/g,"").replace(/\.+$/,"").trim().slice(0,50);
+    if(!t||c.title!==c.t0)return;
+    c.title=t;c.t0=t;PEND.forEach(x=>{if(x.cid===cid)x.t=t});pSave();paintDrawer();
+    if(FP)await FP.catch(()=>{});
+    await tryN(()=>sbx("confidant_chats?id=eq."+cid,"PATCH",{title:t},"return=minimal")).catch(()=>{})
+  }catch(e){}}
 // ---------- riwayat obrolan (database) ----------
 const EMPTY='<div id="empty"><b>Hai, Zaim.</b>Cerita apa aja, aku dengerin.</div>';
 function paint(){log.innerHTML="";if(!hist.length)log.innerHTML=EMPTY;else hist.forEach(m=>add(m.role,m.content,true));markEdit();bottom()}
@@ -703,7 +716,7 @@ async function editLast(){if(busy)return;
   let i=hist.length-1;while(i>=0&&hist[i].role!=="user")i--;if(i<0)return;
   const acted=hist.slice(i+1).some(m=>/\{\{res:[^\n]*✓/.test(m.content));
   if(acted&&!confirm("Pesan ini sudah mencatat atau mengubah data. Kalau dikirim ulang, bisa tercatat dobel (pakai tombol Urungkan dulu kalau perlu). Lanjut ubah?"))return;
-  let t=hist[i].content;const img=t.startsWith("📷 ");if(img)t=t.slice(3);
+  let t=hist[i].content;const img=t.startsWith("📷");if(img)t=t.replace(/^📷\s*/,"");
   const n=hist.length-i,last=PEND[PEND.length-1];
   hist.splice(i);save();
   if(!FP&&last&&last.cid===CID&&n===2){PEND.pop();pSave()}else dropDb(n);
@@ -717,7 +730,7 @@ let PEND=[];try{PEND=JSON.parse(localStorage.getItem(PK())||"[]")}catch(e){}
 const pSave=()=>{try{localStorage.setItem(PK(),JSON.stringify(PEND))}catch(e){}};
 // setiap pasangan pesan masuk antrean dulu, baru dikirim; kalau gagal tetap tersimpan lokal dan dicoba lagi
 function persist(a,b){if(!SES)return;if(!CID)setCid(uuid());
-  let c=CHATS.find(x=>x.id===CID);if(!c){c={id:CID,title:a.replace(/\s+/g," ").slice(0,40),updated_at:""};CHATS.unshift(c)}
+  let c=CHATS.find(x=>x.id===CID);if(!c){c={id:CID,title:a.replace(/^📷\s*/,"").replace(/\s+/g," ").slice(0,40)||"Foto",updated_at:""};c.t0=c.title;CHATS.unshift(c)}
   c.updated_at=new Date().toISOString();CHATS=[c,...CHATS.filter(x=>x!==c)];
   PEND.push({cid:CID,t:c.title,a,b});pSave();paintDrawer();flushPend()}
 async function push(x){
